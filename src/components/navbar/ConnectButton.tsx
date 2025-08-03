@@ -8,23 +8,30 @@ import { useAccount, useBalance } from "wagmi";
 import { USDC } from "@/lib/tokens";
 import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 import { formatTokenDisplayCondensed } from "@/lib/format";
+import { useEffect, useState } from "react";
 
 const ConnectButton = () => {
   const { selectedTokenPair } = useSelectedTokenPair();
   const { isConnected, address } = useAccount();
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Prevent hydration mismatch by only rendering after mount
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const { data: balanceData, isLoading } = useBalance({
     address: address,
     token: USDC.address as `0x${string}`,
     query: {
-      enabled: isConnected && !!address,
+      enabled: isConnected && !!address && isMounted,
       refetchInterval: 3000,
     },
   });
 
   return (
     <div className="flex flex-row items-center bg-[#131313] rounded-full">
-      {isConnected && (
+      {isConnected && isMounted && (
         <div className="w-fit flex h-full px-3 pl-5 text-sm">
           {isLoading ? (
             <div className="h-4 w-16 animate-pulse rounded bg-gray-700" />

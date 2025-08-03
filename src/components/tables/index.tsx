@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import columns from "./Columns";
 import { useAccount } from "wagmi";
 import { ErrorIcon } from "@/icons";
@@ -14,6 +14,12 @@ import { ErrorIcon } from "@/icons";
 export default function Tables() {
   const { data: positions, isLoading, error } = usePositionsTableData();
   const { isConnected } = useAccount();
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const positionsData = positions?.positions?.sort(
     (a, b) => b.createdAt - a.createdAt
@@ -29,6 +35,15 @@ export default function Tables() {
   });
 
   const renderTable = () => {
+    // Always show loading initially to prevent hydration mismatch
+    if (!isMounted) {
+      return (
+        <div className="text-[#9CA3AF] text-xs flex justify-center items-center h-[200px] italic">
+          Loading...
+        </div>
+      );
+    }
+
     if (!isConnected) {
       return (
         <div className="text-[#9CA3AF] text-xs flex justify-center items-center h-[200px] italic">

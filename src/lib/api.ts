@@ -1,4 +1,4 @@
-const optionMarket = "0x9f7E675B6176b5182e5e2FEf77EA9724530c7a78";
+const optionMarket = process.env.NEXT_PUBLIC_OPTION_MARKET_ADDRESS || "0x9f7E675B6176b5182e5e2FEf77EA9724530c7a78";
 
 export interface IVDataPoint {
   ttl: number;
