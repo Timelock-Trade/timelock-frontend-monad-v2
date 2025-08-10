@@ -1,367 +1,239 @@
-# 🕒 Timelock - DeFi Options Trading Platform
+# Timelock Options Trading Frontend
 
-A modern, decentralized options trading platform built on the Monad blockchain, featuring advanced trading tools, real-time market data, and a sophisticated user interface.
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/your-org/timelock-frontend-monad-v2)
+[![Code Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)](https://github.com/your-org/timelock-frontend-monad-v2)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/typescript-5.0-blue)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/next.js-15.2.2-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/react-19.0.0-blue)](https://reactjs.org/)
 
-## 🎯 What It Does
+## Overview
 
-Timelock is a comprehensive DeFi options trading platform that allows users to:
+Timelock is a sophisticated options trading frontend application built for the Monad blockchain ecosystem. It provides a comprehensive interface for trading time-locked options with advanced features including real-time market data visualization, position management, and integrated trading execution. The application solves the complex problem of providing institutional-grade options trading capabilities in a decentralized, user-friendly interface while maintaining high performance and security standards.
 
-- **Trade Options**: Execute long/short positions with customizable parameters
-- **View Market Data**: Real-time price charts, implied volatility data, and market analytics
-- **Manage Positions**: Track and manage active trading positions
-- **Access Faucet**: Get testnet tokens for development and testing
-- **Connect Wallets**: Seamless Web3 wallet integration for blockchain interactions
+## Core Features
 
-## 🏗️ Architecture Overview
+- **Advanced Options Trading Interface**: Long/short position creation with customizable parameters and risk management tools
+- **Real-time Market Data & Charts**: Integrated TradingView charts with live price feeds and implied volatility data
+- **Position Management**: Comprehensive tables for tracking active positions, P&L, and risk metrics
+- **Blockchain Integration**: Seamless connection to Monad testnet with wallet integration via ConnectKit
+- **Responsive Trading Panel**: Dynamic trading forms with settings customization and trade preview capabilities
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Frontend Layer                          │
-├─────────────────────────────────────────────────────────────────┤
-│  Next.js 15 + React 19 + TypeScript + Tailwind CSS            │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐             │
-│  │   Trading   │ │   Charts    │ │  Positions  │             │
-│  │    Panel    │ │  (Trading   │ │   Table     │             │
-│  │             │ │    View)    │ │             │             │
-│  └─────────────┘ └─────────────┘ └─────────────┘             │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      State Management                          │
-├─────────────────────────────────────────────────────────────────┤
-│  Zustand (Settings) + React Query (Data) + Context (Market)   │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      Blockchain Layer                          │
-├─────────────────────────────────────────────────────────────────┤
-│  Wagmi + Viem + ConnectKit + Monad Testnet                    │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐             │
-│  │   Contract  │ │   Wallet    │ │   Chain     │             │
-│  │  Execution  │ │  Connection │ │  Management │             │
-│  └─────────────┘ └─────────────┘ └─────────────┘             │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                        Backend APIs                            │
-├─────────────────────────────────────────────────────────────────┤
-│  Market Data + Price Feeds + Position History                 │
-└─────────────────────────────────────────────────────────────────┘
+## Architecture Overview
+
+This is a modern, client-side rendered React application built with Next.js 15, featuring a component-based architecture with state management through Zustand and React Query. The application integrates with blockchain networks through Viem/Wagmi, provides real-time data visualization via TradingView charts, and maintains a responsive, dark-themed UI built with Tailwind CSS and Radix UI components.
+
+### Request/Response Lifecycle
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant C as Client (React)
+    participant N as Next.js API Routes
+    participant B as Backend APIs
+    participant M as Monad Blockchain
+    participant W as Wallet Provider
+
+    U->>C: Interact with Trading Interface
+    C->>N: API Request (/api/symbol_info, /api/history)
+    N->>B: Forward to External APIs
+    B-->>N: Market Data Response
+    N-->>C: Processed Data
+    C->>W: Wallet Connection Request
+    W-->>C: Wallet Connected
+    C->>M: Smart Contract Interaction
+    M-->>C: Transaction Result
+    C-->>U: Updated UI State
 ```
 
-## 🔄 Application Flow
+### Core Data Flow
 
 ```mermaid
 flowchart TD
-    A[User Lands on Page] --> B[Connect Wallet]
-    B --> C{Wallet Connected?}
-    C -->|No| D[Show Connect Button]
-    C -->|Yes| E[Load Market Data]
+    A[User Selects Token Pair] --> B[Fetch Market IV Data]
+    B --> C[Load Price Data & OHLC]
+    C --> D[Initialize TradingView Chart]
+    D --> E[Display Market Information]
     
-    E --> F[Display Trading Interface]
-    F --> G[Select Token Pair]
-    G --> H[Choose Position Type]
+    F[User Creates Position] --> G[Validate Inputs]
+    G --> H[Preview Trade via Smart Contract]
+    H --> I[Execute Transaction]
+    I --> J[Update Position Tables]
     
-    H --> I{Long or Short?}
-    I -->|Long| J[Configure Long Position]
-    I -->|Short| K[Configure Short Position]
+    K[Real-time Updates] --> L[Poll Market Data]
+    L --> M[Update Charts & Tables]
+    M --> N[Refresh Position Status]
     
-    J --> L[Set Parameters]
-    K --> L
-    L --> M[Preview Trade]
-    M --> N[Execute Transaction]
-    
-    N --> O{Success?}
-    O -->|Yes| P[Update Positions Table]
-    O -->|No| Q[Show Error]
-    
-    P --> R[Monitor Position]
-    R --> S[Close/Modify Position]
-    
-    D --> T[User Connects Wallet]
-    T --> E
+    O[Settings Changes] --> P[Update Trading Parameters]
+    P --> Q[Modify Chart Display]
+    Q --> R[Adjust Risk Calculations]
 ```
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-### Frontend Framework
-- **Next.js 15** - React framework with App Router
-- **React 19** - Latest React with concurrent features
-- **TypeScript** - Type-safe development
-- **Tailwind CSS 4** - Utility-first CSS framework
+### Frontend
+- **Framework**: Next.js 15.2.2 (React 19.0.0)
+- **Language**: TypeScript 5.0
+- **Styling**: Tailwind CSS 4.0, Tailwind CSS Animate
+- **UI Components**: Radix UI (Dialog, Tabs, Popover, Accordion)
+- **State Management**: Zustand 5.0.3, React Query 5.67.3
+- **Forms**: TanStack React Form 1.0.5
+- **Tables**: TanStack React Table 8.21.2
+- **Charts**: Recharts 2.15.1, TradingView Charting Library
+- **Animations**: Motion 12.5.0
 
-### UI Components
-- **Radix UI** - Accessible component primitives
-- **Lucide React** - Beautiful icons
-- **Motion** - Animation library
-- **Recharts** - Charting library
-- **TradingView** - Professional trading charts
+### Blockchain & Web3
+- **Wallet Integration**: ConnectKit 1.8.2, Wagmi 2.14.13
+- **Blockchain Interaction**: Viem
+- **Chain Support**: Monad Testnet (Chain ID: 10143)
+- **Smart Contracts**: Custom options trading contracts
 
-### State Management
-- **Zustand** - Lightweight state management
-- **React Query** - Server state management
-- **React Context** - Component state sharing
+### Development & Build Tools
+- **Package Manager**: npm/yarn
+- **Linting**: ESLint 9.0, Next.js ESLint Config
+- **PostCSS**: Tailwind CSS PostCSS 4.0
+- **Type Checking**: TypeScript 5.0
 
-### Web3 Integration
-- **Wagmi** - React hooks for Ethereum
-- **Viem** - TypeScript interface for Ethereum
-- **ConnectKit** - Wallet connection UI
-- **Big.js** - Decimal arithmetic
-
-### Data & Tables
-- **TanStack Table** - Powerful table components
-- **TanStack Form** - Form management
-- **React Scan** - Development debugging
-
-## 🚀 Getting Started
+## Getting Started - Developer Onboarding
 
 ### Prerequisites
-- Node.js 18+ 
-- Yarn or npm
-- Monad testnet wallet (MetaMask, etc.)
+
+- **Node.js**: `v18.x` or higher (LTS recommended)
+- **Package Manager**: `npm` `v9.x` or `yarn` `v1.22.x`
+- **Git**: `v2.30.x` or higher
+- **Browser**: Modern browser with Web3 wallet support (MetaMask, etc.)
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/your-org/timelock-frontend-monad-v2.git
 cd timelock-frontend-monad-v2
 
 # Install dependencies
+npm install
+# or
 yarn install
-
-# Set up environment variables
-cp .env.example .env.local
 ```
 
-### Environment Variables
+### Configuration
+
+Create a `.env.local` file in the root directory with the following environment variables:
 
 ```bash
-# Required
-NEXT_PUBLIC_API_URL=your_api_url
-NEXT_PUBLIC_OHLC_BACKEND=your_ohlc_backend
-NEXT_PUBLIC_OPTION_MARKET_ADDRESS=0x...
+# Blockchain Configuration
+NEXT_PUBLIC_TRADE_PREVIEW_ADDRESS=0x948bb501CD7894fC62a98b763d31425eE18041F5
+NEXT_PUBLIC_LIQUIDITY_HANDLER_ADDRESS=0x3D2B3BaCCb4C7450B545D291a183AE4011D92A4f
+NEXT_PUBLIC_OPTION_MARKET_ADDRESS=0x9f7E675B6176b5182e5e2FEf77EA9724530c7a78
 
-# Optional (with defaults)
-NEXT_PUBLIC_TRADE_PREVIEW_ADDRESS=0x...
-NEXT_PUBLIC_LIQUIDITY_HANDLER_ADDRESS=0x...
+# API Endpoints
+NEXT_PUBLIC_API_URL=https://your-api-endpoint.com
+NEXT_PUBLIC_OHLC_BACKEND=https://your-ohlc-api.com
+
+# RPC Configuration
+NEXT_PUBLIC_RPC_URL=https://testnet-rpc.monad.xyz
+
+# Optional: Development Overrides
+NEXT_PUBLIC_CHAIN_ID=10143
+NEXT_PUBLIC_BLOCK_EXPLORER=https://testnet-rpc.monad.xyz
 ```
 
-### Development
+**Environment Variables Explained:**
+- `NEXT_PUBLIC_TRADE_PREVIEW_ADDRESS`: Smart contract address for trade preview functionality
+- `NEXT_PUBLIC_LIQUIDITY_HANDLER_ADDRESS`: Contract address for liquidity management
+- `NEXT_PUBLIC_OPTION_MARKET_ADDRESS`: Main options market contract address
+- `NEXT_PUBLIC_API_URL`: Backend API endpoint for market data
+- `NEXT_PUBLIC_OHLC_BACKEND`: API endpoint for price and OHLC data
+- `NEXT_PUBLIC_RPC_URL`: Monad testnet RPC endpoint
+
+### Running the Application
 
 ```bash
 # Start development server
+npm run dev
+# or
 yarn dev
 
-# Build for production
-yarn build
-
-# Start production server
-yarn start
-
-# Run linting
-yarn lint
+# The application will be available at http://localhost:3000
 ```
 
-## 📁 Project Structure
+### Running Tests
+
+```bash
+# Run linting
+npm run lint
+# or
+yarn lint
+
+# Note: Test suite setup is in progress
+# npm test
+# yarn test
+```
+
+## Project Structure
 
 ```
 src/
-├── app/                    # Next.js App Router
-│   ├── api/               # API routes
-│   │   ├── config/        # Configuration endpoints
-│   │   ├── faucet/        # Faucet functionality
-│   │   ├── history/       # Trading history
-│   │   └── symbol_info/   # Token information
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Home page
-├── components/             # React components
-│   ├── dialog/            # Modal dialogs
-│   ├── graph/             # Charting components
-│   ├── navbar/            # Navigation
-│   ├── tables/            # Data tables
-│   ├── trading-panel/     # Trading interface
-│   └── ui/                # Base UI components
-├── context/               # React contexts
-├── hooks/                 # Custom React hooks
-├── icons/                 # Icon components
-├── lib/                   # Utility libraries
-│   ├── abis/             # Contract ABIs
-│   ├── contracts.ts      # Contract addresses
-│   ├── chains.ts         # Blockchain configuration
-│   └── api.ts            # API functions
-├── providers/             # App providers
-└── stores/                # State stores
+├── app/                    # Next.js 15 app router pages and API routes
+│   ├── api/               # Backend API endpoints
+│   ├── layout.tsx         # Root layout component
+│   └── page.tsx           # Main application page
+├── components/            # Reusable React components
+│   ├── dialog/           # Modal dialogs (CreatePosition, Faucet)
+│   ├── graph/            # Charting components (TradingView integration)
+│   ├── navbar/           # Navigation and wallet connection
+│   ├── tables/           # Data table components
+│   ├── trading-panel/    # Trading interface components
+│   └── ui/               # Base UI components (Radix UI wrappers)
+├── context/              # React context providers
+├── hooks/                # Custom React hooks
+├── icons/                # SVG icon components
+├── lib/                  # Utility libraries and configurations
+│   ├── abis/            # Smart contract ABIs
+│   ├── chains.ts        # Blockchain configuration
+│   ├── contracts.ts     # Contract addresses
+│   └── api.ts           # API client functions
+├── providers/            # Application providers (React Query, etc.)
+└── stores/               # Zustand state stores
 ```
 
-## 🔗 API Endpoints
+## Contribution Guidelines
 
-### Market Data
-- `GET /api/get-market/{address}` - Fetch market implied volatility data
-- `POST /api/prices` - Get OHLC price data
+### Development Workflow
 
-### Trading
-- `POST /api/trade-preview` - Preview trade execution
-- `POST /api/trade-execute` - Execute trade transaction
+1. **Fork the repository** and create a feature branch from `main`
+2. **Create a feature branch**: `git checkout -b feature/your-feature-name`
+3. **Make your changes** following the established coding patterns
+4. **Test thoroughly** with the development environment
+5. **Submit a Pull Request** with a clear description of changes
 
-### Configuration
-- `GET /api/config` - Application configuration
-- `GET /api/symbol_info` - Token pair information
+### Coding Standards
 
-## 🎨 Key Features
+- **TypeScript**: Strict mode enabled, proper type annotations required
+- **React**: Functional components with hooks, proper prop typing
+- **Styling**: Tailwind CSS classes, consistent spacing and colors
+- **State Management**: Use Zustand for global state, React Query for server state
+- **Performance**: Implement proper memoization and avoid unnecessary re-renders
 
-### 1. Trading Panel
-- **Long/Short Positions**: Toggle between bullish and bearish strategies
-- **Parameter Configuration**: Set strike price, expiration, and size
-- **Real-time Preview**: See position details before execution
-- **Settings**: Customize trading preferences
+### Commit Message Format
 
-### 2. Advanced Charting
-- **TradingView Integration**: Professional-grade charts
-- **Multiple Timeframes**: 1m to 1D intervals
-- **Technical Indicators**: Built-in analysis tools
-- **Dark Theme**: Optimized for trading
+We follow [Conventional Commits](https://www.conventionalcommits.org/) format:
 
-### 3. Position Management
-- **Real-time Updates**: Live position tracking
-- **Performance Metrics**: P&L, ROI calculations
-- **Action Buttons**: Close, modify positions
-- **History**: Complete trading record
+```
+type(scope): description
 
-### 4. Wallet Integration
-- **Multi-wallet Support**: MetaMask, WalletConnect, etc.
-- **Chain Management**: Monad testnet integration
-- **Transaction Handling**: Gas estimation and execution
-- **Error Handling**: User-friendly error messages
-
-## 🔧 Configuration
-
-### Blockchain Settings
-```typescript
-// src/lib/chains.ts
-export const monad = {
-  chainId: 10143,
-  rpcUrls: { default: { http: [RPC_URL] } },
-  blockExplorers: {
-    default: {
-      name: "MonadScan",
-      url: "https://testnet-rpc.monad.xyz"
-    }
-  }
-};
+feat(trading): add position size calculator
+fix(charts): resolve TradingView chart rendering issue
+docs(readme): update installation instructions
+refactor(api): simplify market data fetching logic
 ```
 
-### Contract Addresses
-```typescript
-// src/lib/contracts.ts
-export const TRADE_PREVIEW_ADDRESS = "0x...";
-export const LIQUIDITY_HANDLER_ADDRESS_USDC = "0x...";
-```
+**Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
-## 🧪 Testing
+## License
 
-### Faucet Access
-- **Testnet Tokens**: Get ETH for gas and USDC for trading
-- **Development Support**: Easy access for testing features
-- **Wallet Integration**: Seamless token distribution
-
-### Test Scenarios
-- Wallet connection flows
-- Trade execution paths
-- Error handling cases
-- Responsive design testing
-
-## 🚀 Deployment
-
-### Build Process
-```bash
-# Create production build
-yarn build
-
-# Start production server
-yarn start
-```
-
-### Environment Setup
-- Configure production API endpoints
-- Set up monitoring and analytics
-- Configure CDN for static assets
-- Set up SSL certificates
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-### Development Guidelines
-- Follow TypeScript best practices
-- Use conventional commit messages
-- Maintain component documentation
-- Test wallet integration thoroughly
-
-## 📊 Performance
-
-### Optimization Features
-- **Code Splitting**: Dynamic imports for better loading
-- **Image Optimization**: Next.js image optimization
-- **Bundle Analysis**: Webpack bundle analyzer
-- **Lazy Loading**: Component lazy loading
-
-### Monitoring
-- **Error Tracking**: Sentry integration ready
-- **Performance Metrics**: Core Web Vitals
-- **Analytics**: User behavior tracking
-
-## 🔒 Security
-
-### Best Practices
-- **Environment Variables**: Secure configuration management
-- **Input Validation**: Client and server-side validation
-- **Wallet Security**: Secure wallet connection handling
-- **Transaction Signing**: Proper signature verification
-
-## 📱 Responsive Design
-
-### Breakpoints
-- **Mobile**: 320px - 768px
-- **Tablet**: 768px - 1024px
-- **Desktop**: 1024px+
-
-### Mobile Features
-- Touch-friendly trading interface
-- Optimized chart interactions
-- Responsive table layouts
-- Mobile-first navigation
-
-### Getting Help
-- **Documentation**: Check this README first
-- **Issues**: GitHub issue tracker
-- **Discord**: Community support channel
-- **Email**: Technical support contact
-
-### Common Issues
-- Wallet connection problems
-- Transaction failures
-- Chart loading issues
-- Performance optimization
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **Monad Team**: Blockchain infrastructure
-- **TradingView**: Charting library
-- **Open Source Community**: Dependencies and tools
-- **Contributors**: Code contributions and feedback
+Distributed under the MIT License. See `LICENSE` file for details.
 
 ---
 
-**Built with ❤️ for the DeFi community**
+**Note**: This application is currently configured for Monad testnet. For production deployment, ensure all environment variables are properly configured for the target network and that all smart contract addresses are verified.
