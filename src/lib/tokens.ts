@@ -11,11 +11,11 @@ export type Token = {
   coingeckoName: string;
 };
 
-export const WBTC: Token = {
+export const WETH: Token = {
   id: "0",
-  symbol: "WBTC",
+  symbol: "WETH",
   name: "Wrapped Bitcoin",
-  address: "0xcf5a6076cfa32686c0Df13aBaDa2b40dec133F1d",
+  address: "0xB5a30b0FDc5EA94A52fDc42e3E9760Cb8449Fb37",
   image: "/tokens/wbtc.png",
   decimals: 18,
   displayDecimals: 4,
@@ -34,8 +34,8 @@ export const USDC: Token = {
 };
 
 export const allTokens: Record<Address, Token> = {
-  [WBTC.address]: WBTC,
+  [WETH.address]: WETH,
   [USDC.address]: USDC,
 };
 
-export const supportedTokenPairs = [[WBTC, USDC]];
+export const supportedTokenPairs = [[WETH, USDC]];

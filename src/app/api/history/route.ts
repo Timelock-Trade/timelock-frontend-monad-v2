@@ -1,7 +1,7 @@
 // import Big from "big.js";
 import { NextResponse } from "next/server";
 
-const POOL_ADDRESS = "0x60a336798063396d8f0f398411bad02a762735c4";
+const POOL_ADDRESS = process.env.NEXT_PUBLIC_POOL_ADDRESS;
 const TIMEFRAME_MAP = {
   1: "1m",
   5: "1m",
@@ -58,8 +58,8 @@ export async function GET(request: Request) {
     );
 
     if (!response.ok) {
-      const error = await response.json();
-      return NextResponse.json(error, { status: response.status });
+      const error = await response.text();
+      return NextResponse.json({error}, { status: response.status });
     }
 
     const data = (await response.json()).data;
