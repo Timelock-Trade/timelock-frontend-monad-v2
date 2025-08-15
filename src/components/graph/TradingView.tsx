@@ -1,5 +1,6 @@
 "use client";
 import { memo, useEffect, useRef } from "react";
+import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 
 import {
   ChartingLibraryWidgetOptions,
@@ -9,11 +10,12 @@ import {
 
 export const TradingView = memo(() => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
+  const { selectedTokenPair } = useSelectedTokenPair();
 
   useEffect(() => {
     if (!window || !chartContainerRef.current) return;
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: "WBTC",
+      symbol: selectedTokenPair[0].symbol,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(
         "/api",

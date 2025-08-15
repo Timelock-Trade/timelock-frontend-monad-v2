@@ -14,12 +14,12 @@ export type Token = {
 export const WETH: Token = {
   id: "0",
   symbol: "WETH",
-  name: "Wrapped Bitcoin",
+  name: "Wrapped Ether",
   address: "0xB5a30b0FDc5EA94A52fDc42e3E9760Cb8449Fb37",
-  image: "/tokens/wbtc.png",
+  image: "/tokens/weth.png",
   decimals: 18,
   displayDecimals: 4,
-  coingeckoName: "wrapped-bitcoin",
+  coingeckoName: "wrapped-ether",
 };
 
 export const USDC: Token = {
