@@ -45,7 +45,7 @@ interface TradePreviewResult {
 }
 
 export default function TradingForm({ isLong }: { isLong: boolean }) {
-  const { isPending, data: hash, writeContract } = useWriteContract();
+  const { isPending, data: hash, writeContract, error } = useWriteContract();
   const [isOpenCreatePositionDialog, setIsOpenCreatePositionDialog] =
     useState(false);
   const [isMax, setIsMax] = useState(false);
@@ -62,6 +62,12 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
     primePool,
     primePoolPriceData,
   } = useMarketData();
+  
+  useEffect(() => {
+    if (error) {
+      console.error(error);
+    }
+  }, [error]);
 
   const form = useForm({
     defaultValues: {
@@ -98,7 +104,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
       : isLong
       ? scaledAmount
       : scaledAmountInPutAsset,
-    ttlIV[selectedDurationIndex].ttl,
+    ttlIV[selectedDurationIndex]?.ttl,
     isMax ? balanceData?.value : 0,
   ];
 
@@ -242,7 +248,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
       liquidityToUse: tradeData.steps[0].liquidity,
     };
 
-    await writeContract({
+    writeContract({
       address: optionMarketAddress as `0x${string}`,
       abi: TRADE_EXECUTE_ABI,
       functionName: "mintOption",
@@ -367,7 +373,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
                   leverage={leverageValue}
                   youPay={totalCost}
                   premiumCost={premiumCost}
-                  duration={formatDuration(ttlIV[selectedDurationIndex].ttl)}
+                  duration={formatDuration(ttlIV[selectedDurationIndex]?.ttl)}
                   callAsset={selectedTokenPair[0]}
                   putAsset={selectedTokenPair[1]}
                   isLong={isLong}

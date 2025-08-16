@@ -17,11 +17,13 @@ import { toast } from "sonner";
 
 const columnHelper = createColumnHelper<Position>();
 
+
 const columns = [
   columnHelper.accessor("isCall", {
     header: "Position",
     cell: (info) => (
       <div className="pl-6 py-2">
+        {console.log(info)}
         <div
           className={cn(
             "flex items-center flex-row gap-2 border px-[12px] py-[6px] rounded-md w-fit border-[#1A1A1A]",
@@ -34,13 +36,13 @@ const columns = [
               <Image
                 src={
                   allTokens[
-                    info.row.original.callAsset.toLowerCase() as `0x${string}`
-                  ].image
+                    info.row.original.callAsset?.toLowerCase() as `0x${string}`
+                  ]?.image
                 }
                 alt={
                   allTokens[
-                    info.row.original.callAsset.toLowerCase() as `0x${string}`
-                  ].symbol
+                    info.row.original.callAsset?.toLowerCase() as `0x${string}`
+                  ]?.symbol
                 }
                 width={12}
                 height={12}
@@ -48,8 +50,8 @@ const columns = [
               <span className="text-sm text-white">
                 {
                   allTokens[
-                    info.row.original.callAsset.toLowerCase() as `0x${string}`
-                  ].symbol
+                    info.row.original.callAsset?.toLowerCase() as `0x${string}`
+                  ]?.symbol
                 }
               </span>
             </div>
@@ -69,7 +71,7 @@ const columns = [
     header: "Size",
     cell: (info) => {
       const token =
-        allTokens[info.row.original.callAsset.toLowerCase() as `0x${string}`];
+        allTokens[info.row.original.callAsset?.toLowerCase() as `0x${string}`];
       const amount = info.getValue()
         ? formatUnits(BigInt(info.getValue()), token.decimals)
         : "";
@@ -150,11 +152,11 @@ const columns = [
       <div className="pr-4">
         <CloseCell
           disabled={Big(info.row.original.value).lte(0)}
-          optionId={info.row.original.exerciseParams.optionId}
-          swapper={info.row.original.exerciseParams.swapper}
-          swapData={info.row.original.exerciseParams.swapData}
+          optionId={info.row.original.exerciseParams?.optionId}
+          swapper={info.row.original.exerciseParams?.swapper}
+          swapData={info.row.original.exerciseParams?.swapData}
           liquidityToExercise={
-            info.row.original.exerciseParams.liquidityToExercise
+            info.row.original.exerciseParams?.liquidityToExercise
           }
         />
       </div>
@@ -167,9 +169,9 @@ const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
   const value = info.getValue();
   const isCall = info.row.original.isCall;
   const putAsset =
-    allTokens[info.row.original.putAsset.toLowerCase() as `0x${string}`];
+    allTokens[info.row.original.putAsset?.toLowerCase() as `0x${string}`];
   const callAsset =
-    allTokens[info.row.original.callAsset.toLowerCase() as `0x${string}`];
+    allTokens[info.row.original.callAsset?.toLowerCase() as `0x${string}`];
 
   const pnl = isCall
     ? formatTokenDisplayCondensed(
