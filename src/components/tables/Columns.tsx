@@ -21,51 +21,53 @@ const columnHelper = createColumnHelper<Position>();
 const columns = [
   columnHelper.accessor("isCall", {
     header: "Position",
-    cell: (info) => (
-      <div className="pl-6 py-2">
-        {console.log(info)}
-        <div
-          className={cn(
-            "flex items-center flex-row gap-2 border px-[12px] py-[6px] rounded-md w-fit border-[#1A1A1A]",
-            info.getValue() ? "text-[#16C784]" : "text-[#EC5058]"
-          )}
-        >
-          {info.getValue() ? <LongIcon /> : <ShortIcon />}
-          <div className="flex flex-col gap-[2px]">
-            <div className="flex flex-row gap-1 items-center">
-              <Image
-                src={
-                  allTokens[
-                    info.row.original.callAsset?.toLowerCase() as `0x${string}`
-                  ]?.image
-                }
-                alt={
-                  allTokens[
-                    info.row.original.callAsset?.toLowerCase() as `0x${string}`
-                  ]?.symbol
-                }
-                width={12}
-                height={12}
-              />
-              <span className="text-sm text-white">
-                {
-                  allTokens[
-                    info.row.original.callAsset?.toLowerCase() as `0x${string}`
-                  ]?.symbol
-                }
+    cell: (info) => {
+      console.log(info);
+      return (
+        <div className="pl-6 py-2">
+          <div
+            className={cn(
+              "flex items-center flex-row gap-2 border px-[12px] py-[6px] rounded-md w-fit border-[#1A1A1A]",
+              info.getValue() ? "text-[#16C784]" : "text-[#EC5058]"
+            )}
+          >
+            {info.getValue() ? <LongIcon /> : <ShortIcon />}
+            <div className="flex flex-col gap-[2px]">
+              <div className="flex flex-row gap-1 items-center">
+                <Image
+                  src={
+                    allTokens[
+                      info.row.original.callAsset?.toLowerCase() as `0x${string}`
+                    ]?.image
+                  }
+                  alt={
+                    allTokens[
+                      info.row.original.callAsset?.toLowerCase() as `0x${string}`
+                    ]?.symbol
+                  }
+                  width={12}
+                  height={12}
+                />
+                <span className="text-sm text-white">
+                  {
+                    allTokens[
+                      info.row.original.callAsset?.toLowerCase() as `0x${string}`
+                    ]?.symbol
+                  }
+                </span>
+              </div>
+              <span
+                className={`text-[10px] uppercase font-semibold opacity-50 ${
+                  info.getValue() ? "text-[#19DE92]" : "text-[#EC5058]"
+                }`}
+              >
+                {info.getValue() ? "Long" : "Short"}
               </span>
             </div>
-            <span
-              className={`text-[10px] uppercase font-semibold opacity-50 ${
-                info.getValue() ? "text-[#19DE92]" : "text-[#EC5058]"
-              }`}
-            >
-              {info.getValue() ? "Long" : "Short"}
-            </span>
           </div>
         </div>
-      </div>
-    ),
+      );
+    },
   }),
   columnHelper.accessor("amount", {
     header: "Size",

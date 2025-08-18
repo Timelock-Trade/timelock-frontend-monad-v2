@@ -74,7 +74,7 @@ export const TradingView = memo(() => {
     return () => {
       tvWidget.remove();
     };
-  }, []);
+  }, [selectedTokenPair]);
 
   return <div ref={chartContainerRef} className="h-full w-full" />;
 });
