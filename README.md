@@ -15,7 +15,7 @@ Timelock is a sophisticated options trading frontend application built for the M
 
 - **Advanced Options Trading Interface**: Long/short position creation with customizable parameters and risk management tools
 - **Real-time Market Data & Charts**: Integrated TradingView charts with live price feeds and implied volatility data
-- **Position Management**: Comprehensive tables for tracking active positions, P&L, and risk metrics
+- **Position Management**: Comprehensive tables for tracking active positions, P&L, and the risk metrics
 - **Blockchain Integration**: Seamless connection to Monad testnet with wallet integration via ConnectKit
 - **Responsive Trading Panel**: Dynamic trading forms with settings customization and trade preview capabilities
 
