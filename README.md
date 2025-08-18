@@ -232,7 +232,7 @@ refactor(api): simplify market data fetching logic
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` file for details.
+Distributed under the MIT License. See the `LICENSE` file for details.
 
 ---
 
