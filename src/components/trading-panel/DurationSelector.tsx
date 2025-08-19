@@ -15,12 +15,12 @@ const DurationSelector = ({
       onValueChange={(value) => setSelectedDurationIndex(Number(value))}
       className=""
     >
-      <TabsList className="p-[5px] h-[46px] w-full bg-[#1a1a1a80] border border-[#282324]">
+      <TabsList className="p-[5px] h-[46px] w-full bg-[#1a1a1a80] border border-[#282324] transition-colors duration-300 ease-in-out">
         {durations.map((duration, index) => (
           <TabsTrigger
             key={index}
             value={index.toString()}
-            className="flex text-[#9CA3AF] font-medium data-[state=active]:text-white cursor-pointer flex-row items-center justify-center gap-2 data-[state=active]:bg-[#0D0D0D]"
+            className="flex text-[#9CA3AF] font-medium data-[state=active]:text-white cursor-pointer flex-row items-center justify-center gap-2 data-[state=active]:bg-[#0D0D0D] transition-all duration-200 ease-in-out hover:bg-[#1f1f1f] data-[state=active]:shadow-lg"
           >
             {duration}
           </TabsTrigger>

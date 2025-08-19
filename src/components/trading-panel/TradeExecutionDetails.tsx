@@ -33,7 +33,7 @@ export default function TradeExecutionDetails({
             value={protocolFee}
             className="pb-[10px]"
           />
-          <div className="w-full mt-5 h-[1px] bg-[#282324]"></div>
+          <div className="w-full mt-5 h-[1px] bg-[#282324] transition-all duration-300 ease-in-out transform hover:bg-opacity-50"></div>
         </AccordionContent>
       </AccordionItem>
     </Accordion>
@@ -54,17 +54,17 @@ const TradeExecutionDetailsItem = ({
   return (
     <div
       className={cn(
-        "flex flex-row items-center justify-between gap-2",
+        "flex flex-row items-center justify-between gap-2 transition-all duration-300 ease-in-out transform hover:translate-x-1 hover:bg-[#282324] hover:bg-opacity-10 rounded-md p-2",
         className
       )}
     >
-      <span className="text-[#9CA3AF] text-sm">{title}</span>
-      <span className="text-white text-sm font-medium">
+      <span className="text-[#9CA3AF] text-sm transition-colors duration-300 ease-in-out group-hover:text-white">{title}</span>
+      <span className="text-white text-sm font-medium transition-all duration-300 ease-in-out">
         {value
           ? formatTokenDisplayCondensed(
-              formatUnits(value, selectedTokenPair[1].decimals),
-              selectedTokenPair[1].decimals
-            )
+            formatUnits(value, selectedTokenPair[1].decimals),
+            selectedTokenPair[1].decimals
+          )
           : "--"}{" "}
         {selectedTokenPair[1].symbol}
       </span>

@@ -25,7 +25,7 @@ const Input = ({
   }, []);
 
   return (
-    <div className="p-[12px_10px_12px_16px] flex gap-1 flex-row rounded-xl border border-[#282324] bg-[#1a1a1a80]">
+    <div className="p-[12px_10px_12px_16px] flex gap-1 flex-row rounded-xl border border-[#282324] bg-[#1a1a1a80] transition-all duration-200 hover:border-[#3a3536] focus-within:border-[#404040] focus-within:shadow-[0_0_0_3px_rgba(255,255,255,0.08)]">
       <div className="flex flex-col gap-0 grow-1">
         <input
           type="number"
@@ -51,22 +51,22 @@ const Input = ({
               e.preventDefault();
             }
           }}
-          className="bg-transparent max-w-[136px] outline-none text-white text-[24px] font-medium"
+          className="bg-transparent max-w-[136px] outline-none text-white text-[24px] font-medium transition-colors placeholder:text-[#6B7280] focus:placeholder:text-[#9CA3AF]"
         />
-        <div className="text-[#9CA3AF] text-xs font-medium max-w-[106px] whitespace-nowrap overflow-scroll">
+        <div className="text-[#9CA3AF] text-xs font-medium max-w-[106px] whitespace-nowrap truncate">
           {primePoolPriceData?.currentPrice && field.state.value
             ? formatTokenDisplayCondensed(
-                Big(primePoolPriceData?.currentPrice)
-                  .mul(Big(field.state.value))
-                  .toString(),
-                selectedTokenPair[1].decimals
-              )
+              Big(primePoolPriceData?.currentPrice)
+                .mul(Big(field.state.value))
+                .toString(),
+              selectedTokenPair[1].decimals
+            )
             : "--"}{" "}
           {selectedTokenPair[1].symbol}
         </div>
       </div>
       <div className="flex flex-row gap-2 items-start">
-        <div className="flex items-center gap-[6px] text-sm justify-center rounded-md bg-[#0D0D0D] h-[36px] px-[12px]">
+        <div className="flex items-center gap-[6px] text-sm justify-center rounded-md bg-[#0D0D0D] h-[36px] px-[12px] transition-colors duration-200 hover:bg-[#141414]">
           <Image
             src={selectedTokenPair[0].image}
             alt={selectedTokenPair[0].symbol}
@@ -77,7 +77,7 @@ const Input = ({
         </div>
         <button
           type="button"
-          className="text-sm font-medium mt-2 cursor-pointer"
+          className="text-sm font-medium mt-2 cursor-pointer transition-transform duration-150 hover:scale-105 active:scale-95"
           onClick={() => {
             setIsMax(true);
           }}
