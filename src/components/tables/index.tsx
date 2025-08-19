@@ -15,6 +15,7 @@ export default function Tables() {
   const { data: positions, isLoading, error } = usePositionsTableData();
   const { isConnected } = useAccount();
   const [isMounted, setIsMounted] = useState(false);
+  const [activeTab, setActiveTab] = useState<"open" | "closed">("open");
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -119,14 +120,57 @@ export default function Tables() {
     );
   };
 
+  const renderClosedPositions = () => {
+    // Mirror the loading and connection states for consistency
+    if (!isMounted) {
+      return (
+        <div className="text-[#9CA3AF] text-xs flex justify-center items-center h-[200px] italic">
+          Loading...
+        </div>
+      );
+    }
+
+    if (!isConnected) {
+      return (
+        <div className="text-[#9CA3AF] text-xs flex justify-center items-center h-[200px] italic">
+          Connect wallet to see your closed positions
+        </div>
+      );
+    }
+
+    // Placeholder until closed positions data source is available
+    return (
+      <div className="text-[#9CA3AF] text-xs flex justify-center items-center h-[200px] italic">
+        No closed positions to show
+      </div>
+    );
+  };
+
   return (
     <div className="border border-[#1A1A1A] rounded-md mt-4 relative">
       <div className="flex flex-row items-center border-b border-[#1A1A1A] gap-6 pl-6 ">
-        <span className="text-sm font-semibold border-b border-b-white py-4">
-          Positions
-        </span>
+        <button
+          className={`text-sm font-semibold py-4 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out ${
+            activeTab === "open"
+              ? "text-white after:w-full after:opacity-100"
+              : "text-white/60 hover:text-white after:w-0 after:opacity-0"
+          }`}
+          onClick={() => setActiveTab("open")}
+        >
+          Open Positions
+        </button>
+        <button
+          className={`text-sm font-semibold py-4 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out ${
+            activeTab === "closed"
+              ? "text-white after:w-full after:opacity-100"
+              : "text-white/60 hover:text-white after:w-0 after:opacity-0"
+          }`}
+          onClick={() => setActiveTab("closed")}
+        >
+          Closed Positions
+        </button>
       </div>
-      {renderTable()}
+      {activeTab === "open" ? renderTable() : renderClosedPositions()}
     </div>
   );
 }
