@@ -2,4 +2,11 @@
   --tv-color-platform-background: #0d0d0d;
   --tv-color-pane-background: #0d0d0d;
   --tv-color-pane-background-secondary: #0d0d0d;
+    /* Prefer a safe font that has numeric glyphs */
+    --tv-font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  /* Fallback enforcement for some UI elements */
+  .tv-chart, .tv-dialog, .chart-container {
+    font-family: Arial, Helvetica, sans-serif !important;
 }

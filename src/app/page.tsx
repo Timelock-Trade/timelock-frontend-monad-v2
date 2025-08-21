@@ -29,10 +29,7 @@ export default async function Home() {
         <div className=" max-w-[1440px] flex flex-row mx-auto border-t border-t-[#1A1A1A]">
           <div
             className="pt-6 pl-6 w-full max-w-[1054px] pr-6"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(11, 74, 143, 0.06) 0%, rgba(0, 0, 0, 0.00) 100%), #0D0D0D",
-            }}
+            style={{ background: "#0D0D0D" }}
           >
             <SelectedTokenPairDetails />
             {/* TODO: check border color and corners */}

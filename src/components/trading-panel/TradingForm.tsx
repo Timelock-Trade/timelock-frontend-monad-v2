@@ -364,7 +364,9 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
                     isPending
                   }
                 >
-                  {isLong
+                  {!isConnected
+                    ? "Connect Wallet"
+                    : isLong
                     ? "Long " + selectedTokenPair[0].symbol
                     : "Short " + selectedTokenPair[0].symbol}
                 </button>
@@ -392,7 +394,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
             );
           }}
         </form.Subscribe>
-        <div className="text-xs pt-3 max-w-sm text-center text-[#9CA3AF]">
+        <div className="text-xs pt-3 max-w-sm mx-auto text-center text-[#9CA3AF]">
           The premium you pay on timelock is used to protect your trade from
           liquidations even if the asset price goes to 0.
         </div>

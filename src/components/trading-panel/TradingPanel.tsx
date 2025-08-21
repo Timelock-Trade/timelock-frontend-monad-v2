@@ -20,7 +20,7 @@ export default function TradingPanel() {
   const [tabValue, setTabValue] = useState(TabValue.LONG);
 
   return (
-    <div className="border-l flex flex-col grow-1 pr-[24px] border-l-[#1A1A1A] pl-[32px]">
+    <div className="border-l flex flex-col w-[480px] shrink-0 pr-[24px] border-l-[#1A1A1A] pl-[32px]">
       <div className="pt-6 w-full">
         <Tabs
           value={tabValue}

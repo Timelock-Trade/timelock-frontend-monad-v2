@@ -1,5 +1,5 @@
 export const TRADE_PREVIEW_ADDRESS =
-  process.env.NEXT_PUBLIC_TRADE_PREVIEW_ADDRESS as `0x${string}` | undefined;
+	process.env.NEXT_PUBLIC_TRADE_PREVIEW_ADDRESS as `0x${string}`;
 
 export const LIQUIDITY_HANDLER_ADDRESS_USDC =
-  process.env.NEXT_PUBLIC_LIQUIDITY_HANDLER_ADDRESS as `0x${string}` | undefined;
+	process.env.NEXT_PUBLIC_LIQUIDITY_HANDLER_ADDRESS as `0x${string}`;

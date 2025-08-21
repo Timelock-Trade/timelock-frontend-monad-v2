@@ -30,18 +30,19 @@ const ConnectButton = () => {
   });
 
   return (
-    <div className="flex flex-row items-center bg-[#131313] rounded-full transition-all duration-300 ease-in-out hover:bg-[#181818]">
+    <div className="flex flex-row items-center bg-[#131313] rounded-[14px] overflow-hidden">
       {isConnected && isMounted && (
-        <div className="w-fit flex h-full px-3 pl-5 text-sm transition-opacity duration-200 ease-in-out">
+        <div className="w-fit flex h-full px-3 pl-5 text-sm">
           {isLoading ? (
             <div className="h-4 w-16 animate-pulse rounded bg-gray-700" />
           ) : (
-            `${balanceData
-              ? formatTokenDisplayCondensed(
-                balanceData.formatted,
-                selectedTokenPair[1].decimals
-              )
-              : "--"
+            `${
+              balanceData
+                ? formatTokenDisplayCondensed(
+                    balanceData.formatted,
+                    selectedTokenPair[1].decimals
+                  )
+                : "--"
             } ${selectedTokenPair[1].symbol}`
           )}
         </div>
@@ -52,8 +53,8 @@ const ConnectButton = () => {
             <button
               onClick={show}
               className={cn(
-                "w-[138px] h-[42px] whitespace-nowrap rounded-full bg-white px-4 py-2 text-[#0D0D0D] font-semibold text-[15px] cursor-pointer transition-all duration-200 ease-in-out hover:scale-[1.02] active:scale-[0.98]",
-                isConnected && "text-[#D1D5DA] font-bold bg-white/[0.06] hover:bg-white/[0.08]"
+                "w-[138px] h-[42px] whitespace-nowrap rounded-[14px] bg-white px-4 py-2 text-[#0D0D0D] font-semibold text-[15px] cursor-pointer",
+                isConnected && "text-[#D1D5DA] font-bold bg-white/[0.06]"
               )}
             >
               {isConnected && address ? (

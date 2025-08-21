@@ -12,6 +12,10 @@ export const TradingView = memo(() => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const { selectedTokenPair } = useSelectedTokenPair();
 
+  // Scale factor for the entire TradingView UI
+  const SCALE = 0.8; // e.g., 0.9 = 90% size
+  const compensatingPercent = `${(1 / SCALE) * 100}%`;
+
   useEffect(() => {
     if (!window || !chartContainerRef.current) return;
     const widgetOptions: ChartingLibraryWidgetOptions = {
@@ -46,7 +50,7 @@ export const TradingView = memo(() => {
       user_id: "public_user_id",
       fullscreen: false,
       theme: "dark",
-      custom_font_family: "Giest",
+      custom_font_family: "Arial, Helvetica, sans-serif",
       debug: false,
       custom_css_url: "/static/tradingview.css",
       time_scale: {
@@ -67,6 +71,9 @@ export const TradingView = memo(() => {
       // Panel
       "paneProperties.background": "#0D0D0D",
       "paneProperties.backgroundType": "solid",
+      // Ensure scale labels use a visible color
+      "scalesProperties.textColor": "#E5E7EB",
+      "scalesProperties.fontSize": 11,
     });
 
     tvWidget.onChartReady(() => {});
@@ -74,9 +81,22 @@ export const TradingView = memo(() => {
     return () => {
       tvWidget.remove();
     };
-  }, [selectedTokenPair]);
+  }, []);
 
-  return <div ref={chartContainerRef} className="h-full w-full" />;
+  return (
+    <div className="h-full w-full overflow-hidden">
+      <div
+        ref={chartContainerRef}
+        className="h-full w-full"
+        style={{
+          transform: `scale(${SCALE})`,
+          transformOrigin: "top left",
+          width: compensatingPercent,
+          height: compensatingPercent,
+        }}
+      />
+    </div>
+  );
 });
 
 TradingView.displayName = "TradingView";
