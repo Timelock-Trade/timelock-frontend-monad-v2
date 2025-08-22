@@ -3,7 +3,7 @@ import { ClosedPosition } from "@/hooks/useClosedPositionsData";
 import { LongIcon, ShortIcon } from "@/icons";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
+import { Token } from "@/lib/tokens";
 
 const columnHelper = createColumnHelper<ClosedPosition>();
 
@@ -15,11 +15,10 @@ const formatTs = (ts: number) => {
   }
 };
 
-const columns = [
+const createClosedColumns = (selectedTokenPair: Token[]) => [
   columnHelper.accessor("isCall", {
     header: "Position",
     cell: (info) => {
-      const { selectedTokenPair } = useSelectedTokenPair();
       const callToken = selectedTokenPair[0];
       return (
         <div className="pl-6 py-2">
@@ -55,7 +54,6 @@ const columns = [
       if (!raw) return <span className="text-sm text-white">--</span>;
       const asNumber = Number(raw) / 1e18;
       const formatted = isFinite(asNumber) ? asNumber.toFixed(2) : "--";
-      const { selectedTokenPair } = useSelectedTokenPair();
       // Display in quote token (assume token[1])
       return (
         <span className="text-sm text-white font-semibold">
@@ -78,6 +76,6 @@ const columns = [
   }),
 ];
 
-export default columns;
+export default createClosedColumns;
 
 

@@ -9,15 +9,17 @@ import {
 } from "@tanstack/react-table";
 import { useMemo, useState, useEffect } from "react";
 import columns from "./Columns";
-import closedColumns from "./ClosedColumns";
+import createClosedColumns from "./ClosedColumns";
 import { useAccount } from "wagmi";
 import { ErrorIcon } from "@/icons";
+import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 
 export default function Tables() {
   const { data: positions, isLoading, error } = usePositionsTableData();
   const { isConnected } = useAccount();
   const { data: closed, isLoading: isClosedLoading, error: closedError } =
     useClosedPositionsData();
+  const { selectedTokenPair } = useSelectedTokenPair();
   const [isMounted, setIsMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"open" | "closed">("open");
 
@@ -30,7 +32,12 @@ export default function Tables() {
     (a, b) => b.createdAt - a.createdAt
   );
 
-  const closedData = closed?.positions ?? [];
+  const closedData = useMemo(() => closed?.positions ?? [], [closed?.positions]);
+
+  const closedCols = useMemo(
+    () => createClosedColumns(selectedTokenPair),
+    [selectedTokenPair]
+  );
 
   const table = useReactTable({
     data: useMemo(() => {
@@ -43,7 +50,7 @@ export default function Tables() {
 
   const closedTable = useReactTable({
     data: useMemo(() => closedData, [closedData]),
-    columns: closedColumns,
+    columns: closedCols,
     getCoreRowModel: getCoreRowModel(),
   });
 

@@ -81,7 +81,7 @@ export const TradingView = memo(() => {
     return () => {
       tvWidget.remove();
     };
-  }, []);
+  }, [selectedTokenPair]);
 
   return (
     <div className="h-full w-full overflow-hidden">
