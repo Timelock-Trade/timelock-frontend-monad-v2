@@ -14,6 +14,8 @@ import { TRADE_EXECUTE_ABI } from "@/lib/abis/tradeExecuteAbi";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { truncateDecimals } from "@/lib/format";
+import { useQueryClient } from "@tanstack/react-query";
+import type { Hex } from "viem";
 
 const columnHelper = createColumnHelper<Position>();
 
@@ -22,10 +24,10 @@ const columns = [
   columnHelper.accessor("isCall", {
     header: "Position",
     cell: (info) => (
-      <div className="pl-6 py-2">
+      <div className="pl-4 md:pl-6 py-2">
         <div
           className={cn(
-            "flex items-center flex-row gap-2 border px-[12px] py-[6px] rounded-md w-fit border-[#1A1A1A]",
+            "flex items-center flex-row gap-1 md:gap-2 border px-2 md:px-[12px] py-1 md:py-[6px] rounded-md w-fit border-[#1A1A1A]",
             info.getValue() ? "text-[#16C784]" : "text-[#EC5058]"
           )}
         >
@@ -46,7 +48,7 @@ const columns = [
                 width={12}
                 height={12}
               />
-              <span className="text-sm text-white">
+              <span className="text-xs md:text-sm text-white">
                 {
                   allTokens[
                     info.row.original.callAsset?.toLowerCase() as `0x${string}`
@@ -76,8 +78,8 @@ const columns = [
         : "";
 
       return (
-        <span className="text-sm text-white font-semibold">
-          {truncateDecimals(amount, 2)} {token.symbol}
+        <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
+          {amount ? truncateDecimals(amount, 2) : "0.00"} {token.symbol}
         </span>
       );
     },
@@ -102,8 +104,10 @@ const columns = [
         allTokens[info.row.original.putAsset.toLowerCase() as `0x${string}`]
           .symbol;
       return (
-        <span className="text-sm text-white font-semibold">
-          {value ? truncateDecimals(formatUnits(BigInt(value), decimals), 2) : "--"}{" "}
+        <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
+          {value
+            ? truncateDecimals(formatUnits(BigInt(value), decimals), 2)
+            : "--"}{" "}
           {symbol}
         </span>
       );
@@ -127,12 +131,9 @@ const columns = [
       const secondsRemaining = Math.max(0, remaining % 60);
 
       return (
-        <div className="text-[11px] text-white/[0.5] flex flex-col gap-1">
-          <div className="flex items-center gap-1">
-            <HourglassIcon />
-            <span>{`${hoursRemaining}h ${minutesRemaining}m ${secondsRemaining}s`}</span>
-          </div>
-          <div className="w-[130px] h-[10px] bg-[#1A1A1A] rounded-md relative overflow-hidden">
+        <div className="text-[10px] md:text-[11px] text-white/[0.5] flex flex-col gap-1">
+          <span className="whitespace-nowrap">{`${hoursRemaining}h ${minutesRemaining}m`}</span>
+          <div className="w-[100px] md:w-[130px] h-[8px] md:h-[10px] bg-[#1A1A1A] rounded-md relative overflow-hidden">
             <div
               className={`absolute top-0 left-0 h-full rounded-md ${
                 !info.row.original.isCall ? "bg-[#EC5058]" : "bg-[#19DE92]"
@@ -147,7 +148,7 @@ const columns = [
   columnHelper.display({
     id: "actions",
     cell: (info) => (
-      <div className="pr-4">
+      <div className="pr-2 md:pr-4">
         <CloseCell
           disabled={Big(info.row.original.value).lte(0)}
           optionId={info.row.original.exerciseParams?.optionId}
@@ -193,17 +194,17 @@ const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
   } catch {}
 
   return (
-    <div className="flex flex-row items-center gap-1 text-[13px]">
+    <div className="flex flex-row items-center gap-1 text-[11px] md:text-[13px]">
       {Big(value).lte(0) ? (
-        <div className="flex flex-row items-center gap-2">
-          <span className="line-through text-white/[0.5]">{pnl ?? "--"} </span>
-          <span className="">0 USDC{percent ? ` (${percent}%)` : ""}</span>
-          <span className="underline text-white/[0.5] underline-offset-2 cursor-pointer">
+        <div className="flex flex-row items-center gap-1 md:gap-2">
+          <span className="line-through text-white/[0.5] whitespace-nowrap">{pnl ?? "--"} </span>
+          <span className="whitespace-nowrap">0 USDC</span>
+          <span className="underline text-white/[0.5] underline-offset-2 cursor-pointer hidden md:inline">
             How?
           </span>
         </div>
       ) : (
-        <span className="text-[#19DE92]">
+        <span className="text-[#19DE92] whitespace-nowrap">
           {pnl}{" "}
           {
             allTokens[info.row.original.putAsset.toLowerCase() as `0x${string}`]
@@ -233,12 +234,16 @@ const CloseCell = ({
   const { data: executedTradeData, error } = useWaitForTransactionReceipt({
     hash: hash,
   });
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (executedTradeData?.status === "success") {
       toast.success("Position Closed");
+      // Refresh positions tables
+      queryClient.invalidateQueries({ queryKey: ["positions"] });
+      queryClient.invalidateQueries({ queryKey: ["closed-positions"] });
     }
-  }, [executedTradeData]);
+  }, [executedTradeData, queryClient]);
 
   useEffect(() => {
     if (error) {
@@ -252,28 +257,59 @@ const CloseCell = ({
 
   return (
     <button
-      disabled={isPending}
+      disabled={
+        isPending ||
+        disabled ||
+        !optionId ||
+        !swapper ||
+        !swapData ||
+        !liquidityToExercise ||
+        swapper.length === 0 ||
+        swapData.length === 0 ||
+        liquidityToExercise.length === 0
+      }
       onClick={() => {
         if (disabled) {
           toast.error("Position cannot be closed right now. PnL < 0");
           return;
         }
-        writeContract({
-          address: optionMarketAddress as `0x${string}`,
-          abi: TRADE_EXECUTE_ABI,
-          functionName: "exerciseOption",
-          args: [
-            {
-              optionId,
-              swapper,
-              swapData,
-              liquidityToExercise,
-            },
-          ],
-        });
+        if (
+          !optionId ||
+          !swapper ||
+          !swapData ||
+          !liquidityToExercise ||
+          swapper.length === 0 ||
+          swapData.length === 0 ||
+          liquidityToExercise.length === 0
+        ) {
+          toast.error("Position data unavailable", {
+            description: "Required close parameters are missing.",
+          });
+          return;
+        }
+        try {
+          writeContract({
+            address: optionMarketAddress as `0x${string}`,
+            abi: TRADE_EXECUTE_ABI,
+            functionName: "exerciseOption",
+            args: [
+              {
+                optionId: BigInt(optionId),
+                swapper,
+                swapData: swapData as Hex[],
+                liquidityToExercise: liquidityToExercise.map((v) => BigInt(v)),
+              },
+            ],
+          });
+        } catch (e: unknown) {
+          const errorMessage = e instanceof Error ? e.message : "Unknown error occurred";
+          toast.error("Position Close Failed", {
+            description: errorMessage,
+          });
+        }
       }}
       className={cn(
-        "text-[#EC5058] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+        "text-[#EC5058] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer text-xs md:text-sm px-2 py-1 whitespace-nowrap"
       )}
     >
       Close
@@ -286,7 +322,7 @@ const CurrentPriceCell = () => {
   const { selectedTokenPair } = useSelectedTokenPair();
 
   return (
-    <span className="text-sm text-white font-semibold">
+    <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
       {primePoolPriceData?.currentPrice
         ? truncateDecimals(
             Big(primePoolPriceData?.currentPrice).toString(),
@@ -297,25 +333,5 @@ const CurrentPriceCell = () => {
     </span>
   );
 };
-
-const HourglassIcon = ({ size = 11 }: { size?: number }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="animate-spin"
-  >
-    <path d="M7 2h10" />
-    <path d="M7 22h10" />
-    <path d="M9 4v4l3 3 3-3V4" />
-    <path d="M9 20v-4l3-3 3 3v4" />
-  </svg>
-);
 
 export default columns;

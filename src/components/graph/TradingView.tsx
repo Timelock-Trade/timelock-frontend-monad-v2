@@ -1,6 +1,7 @@
 "use client";
 import { memo, useEffect, useRef } from "react";
 import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 import {
   ChartingLibraryWidgetOptions,
@@ -11,13 +12,29 @@ import {
 export const TradingView = memo(() => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const { selectedTokenPair } = useSelectedTokenPair();
+  const isMobile = useIsMobile(768);
+  const isTablet = useIsMobile(1024);
 
-  // Scale factor for the entire TradingView UI
-  const SCALE = 0.8; // e.g., 0.9 = 90% size
+  // Responsive scale factor for the entire TradingView UI
+  const getScale = () => {
+    if (isMobile) return 0.65; // 65% scale for mobile
+    if (isTablet) return 0.75; // 75% scale for tablets
+    return 0.85; // 85% scale for desktop
+  };
+
+  const SCALE = getScale();
   const compensatingPercent = `${(1 / SCALE) * 100}%`;
 
   useEffect(() => {
     if (!window || !chartContainerRef.current) return;
+    
+    // Responsive font size for chart labels - moved inside useEffect
+    const getFontSize = () => {
+      if (isMobile) return 9; // Smaller font for mobile
+      if (isTablet) return 10; // Medium font for tablets
+      return 11; // Default font for desktop
+    };
+    
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: selectedTokenPair[0].symbol,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,9 +88,9 @@ export const TradingView = memo(() => {
       // Panel
       "paneProperties.background": "#0D0D0D",
       "paneProperties.backgroundType": "solid",
-      // Ensure scale labels use a visible color
+      // Ensure scale labels use a visible color and responsive font size
       "scalesProperties.textColor": "#E5E7EB",
-      "scalesProperties.fontSize": 11,
+      "scalesProperties.fontSize": getFontSize(),
     });
 
     tvWidget.onChartReady(() => {});
@@ -81,7 +98,7 @@ export const TradingView = memo(() => {
     return () => {
       tvWidget.remove();
     };
-  }, [selectedTokenPair]);
+  }, [selectedTokenPair, isMobile, isTablet, SCALE]);
 
   return (
     <div className="h-full w-full overflow-hidden">

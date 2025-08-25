@@ -13,8 +13,6 @@ import createClosedColumns from "./ClosedColumns";
 import { useAccount } from "wagmi";
 import { ErrorIcon } from "@/icons";
 import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
-import { Position } from "@/hooks/usePositionsTableData";
-import { WETH, USDC } from "@/lib/tokens";
 
 export default function Tables() {
   const { data: positions, isLoading, error } = usePositionsTableData();
@@ -41,38 +39,10 @@ export default function Tables() {
     [selectedTokenPair]
   );
 
-  // Sample fallback long position (WETH/USDC)
-  const samplePosition: Position = useMemo(() => {
-    const now = Math.floor(Date.now() / 1000);
-    return {
-      optionMarket: "0x0000000000000000000000000000000000000000",
-      callAsset: WETH.address,
-      putAsset: USDC.address,
-      isCall: true,
-      value: "0", // ensures Close shows info toast and does not attempt contract call
-      createdAt: now - 600,
-      expiry: now + 24 * 3600,
-      paid: "5000000", // 5 USDC (6 decimals)
-      amount: "100000000000000000", // 0.1 WETH (18 decimals)
-      liquidityValues: [],
-      exerciseParams: {
-        optionId: "0",
-        swapper: [],
-        swapData: [],
-        liquidityToExercise: [],
-      },
-    };
-  }, []);
-
-  const tableData = useMemo(() => {
-    if (positionsData && positionsData.length > 0) return positionsData;
-    return [samplePosition];
-  }, [positionsData, samplePosition]);
-
   const table = useReactTable({
     data: useMemo(() => {
-      return tableData;
-    }, [tableData]),
+      return positionsData ?? [];
+    }, [positionsData]),
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -93,6 +63,14 @@ export default function Tables() {
       );
     }
 
+    if (!isConnected) {
+      return (
+        <div className="text-[#9CA3AF] text-xs flex justify-center items-center h-[200px] italic">
+          Connect wallet to see your open positions
+        </div>
+      );
+    }
+
     if (isLoading) {
       return (
         <div className="text-[#9CA3AF] text-xs flex justify-center items-center h-[200px] italic">
@@ -109,17 +87,25 @@ export default function Tables() {
       );
     }
 
+    if (!positionsData || positionsData.length === 0) {
+      return (
+        <div className="text-[#9CA3AF] text-xs flex justify-center items-center h-[200px] italic">
+          No open positions to show
+        </div>
+      );
+    }
+
     return (
       <div className="overflow-x-auto overflow-hidden">
-        <table className="w-full">
+        <table className="w-full min-w-[800px] md:min-w-full">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="border-b border-[#1A1A1A]">
                 {headerGroup.headers.map((header, index) => (
                   <th
                     key={header.id}
-                    className={`py-4 text-left text-xs text-[#616E85] font-medium ${
-                      index === 0 ? "pl-6" : ""
+                    className={`py-3 md:py-4 text-left text-xs md:text-sm text-[#9CA3AF] whitespace-nowrap ${
+                      index === 0 ? "pl-4 md:pl-6" : "px-2 md:px-4"
                     }`}
                   >
                     {header.isPlaceholder
@@ -139,8 +125,10 @@ export default function Tables() {
                 key={row.id}
                 className="border-b border-[#1A1A1A] bg-[#0D0D0D] hover:bg-[#1A1A1A]/50 transition-colors"
               >
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="font-semibold text-sm">
+                {row.getVisibleCells().map((cell, index) => (
+                  <td key={cell.id} className={`font-semibold text-xs md:text-sm ${
+                    index === 0 ? "" : "px-2 md:px-4"
+                  }`}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -195,15 +183,15 @@ export default function Tables() {
 
     return (
       <div className="overflow-x-auto overflow-hidden">
-        <table className="w-full">
+        <table className="w-full min-w-[800px] md:min-w-full">
           <thead>
             {closedTable.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="border-b border-[#1A1A1A]">
                 {headerGroup.headers.map((header, index) => (
                   <th
                     key={header.id}
-                    className={`py-4 text-left text-xs text-[#616E85] font-medium ${
-                      index === 0 ? "pl-6" : ""
+                    className={`py-3 md:py-4 text-left text-xs md:text-sm text-[#9CA3AF] whitespace-nowrap ${
+                      index === 0 ? "pl-4 md:pl-6" : "px-2 md:px-4"
                     }`}
                   >
                     {header.isPlaceholder
@@ -223,8 +211,10 @@ export default function Tables() {
                 key={row.id}
                 className="border-b border-[#1A1A1A] bg-[#0D0D0D] hover:bg-[#1A1A1A]/50 transition-colors"
               >
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="font-semibold text-sm">
+                {row.getVisibleCells().map((cell, index) => (
+                  <td key={cell.id} className={`font-semibold text-xs md:text-sm ${
+                    index === 0 ? "" : "px-2 md:px-4"
+                  }`}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -238,9 +228,9 @@ export default function Tables() {
 
   return (
     <div className="border border-[#1A1A1A] rounded-md mt-4 relative">
-      <div className="flex flex-row items-center border-b border-[#1A1A1A] gap-6 pl-6 ">
+      <div className="flex flex-row items-center border-b border-[#1A1A1A] gap-4 md:gap-6 px-4 md:px-6 ">
         <button
-          className={`text-sm font-semibold py-4 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out ${
+          className={`text-xs md:text-sm font-semibold py-3 md:py-4 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out whitespace-nowrap ${
             activeTab === "open"
               ? "text-white after:w-full after:opacity-100"
               : "text-white/60 hover:text-white after:w-0 after:opacity-0"
@@ -250,7 +240,7 @@ export default function Tables() {
           Open Positions
         </button>
         <button
-          className={`text-sm font-semibold py-4 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out ${
+          className={`text-xs md:text-sm font-semibold py-3 md:py-4 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out whitespace-nowrap ${
             activeTab === "closed"
               ? "text-white after:w-full after:opacity-100"
               : "text-white/60 hover:text-white after:w-0 after:opacity-0"
