@@ -1,17 +1,14 @@
-// import TokenPairSelector from "@/components/TokenPairSelector";
 import { getMarketIvData, getPriceData } from "@/lib/api";
 import HomeClient from "./HomeClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   try {
-    console.log("Starting data fetch...");
     const [market, priceData] = await Promise.all([
       getMarketIvData(),
       getPriceData(),
     ]);
-    
-    console.log("Market data:", market);
-    console.log("Price data:", priceData);
     
     const ttlIV = [...market.market.ttlIV].sort((a, b) => a.ttl - b.ttl);
     const primePoolPriceData = priceData.find(

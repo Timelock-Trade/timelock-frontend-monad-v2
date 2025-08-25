@@ -25,6 +25,7 @@ export interface ClosedPositionRaw {
   opTickArrayLen: number;
   chainId: number;
   internalOptions: ClosedPositionInternalOption[];
+  amount: string;
 }
 
 export interface ClosedPosition {
@@ -51,9 +52,10 @@ export function useClosedPositionsData() {
   return useQuery({
     queryKey: ["closed-positions", address, chainId],
     queryFn: async () => {
-      // Closed positions are global; optionally filter by owner once backend supports it
+      if (!address || !chainId) return { positions: [] } as { positions: ClosedPosition[] };
+
       const response = await fetch(
-        `${apiUrl}/expired-options`,
+        `${apiUrl}/expired-options?address=${address}&chainId=${chainId}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -68,15 +70,8 @@ export function useClosedPositionsData() {
 
       const data = (await response.json()) as { options: ClosedPositionRaw[] };
 
-      // Filter by connected user and current chain if available
-      const filtered = data.options.filter((o) => {
-        const ownerOk = address ? o.owner.toLowerCase() === address.toLowerCase() : true;
-        const chainOk = chainId ? o.chainId === chainId : true;
-        return ownerOk && chainOk;
-      });
-
       // Map minimal fields required for display in a closed positions table
-      const positions: ClosedPosition[] = filtered
+      const positions: ClosedPosition[] = data.options
         .map((o) => ({
           tokenId: o.tokenId,
           market: o.market,
@@ -85,12 +80,13 @@ export function useClosedPositionsData() {
           expiry: o.expiry,
           isCall: o.isCall,
           strike: o.internalOptions?.[0]?.strike,
+          amount: o.amount,
         }))
         .sort((a, b) => b.createdAt - a.createdAt);
 
       return { positions };
     },
-    enabled: true,
+    enabled: !!address && !!chainId,
     refetchInterval: 10000,
   });
 }

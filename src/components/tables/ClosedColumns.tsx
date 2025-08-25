@@ -4,6 +4,8 @@ import { LongIcon, ShortIcon } from "@/icons";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Token } from "@/lib/tokens";
+import { formatUnits } from "viem";
+import { formatTokenDisplayCondensed } from "@/lib/format";
 
 const columnHelper = createColumnHelper<ClosedPosition>();
 
@@ -44,6 +46,19 @@ const createClosedColumns = (selectedTokenPair: Token[]) => [
             </div>
           </div>
         </div>
+      );
+    },
+  }),
+  columnHelper.accessor("amount", {
+    header: "Amount",
+    cell: (info) => {
+      const token = selectedTokenPair[0];
+      const raw = info.getValue();
+      const amount = raw ? formatUnits(BigInt(raw), token.decimals) : "";
+      return (
+        <span className="text-sm text-white font-semibold">
+          {formatTokenDisplayCondensed(amount, token.decimals)} {token.symbol}
+        </span>
       );
     },
   }),

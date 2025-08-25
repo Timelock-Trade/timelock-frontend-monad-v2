@@ -14,6 +14,8 @@ import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { TRADE_EXECUTE_ABI } from "@/lib/abis/tradeExecuteAbi";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import type { Hex } from "viem";
 
 const columnHelper = createColumnHelper<Position>();
 
@@ -226,10 +228,14 @@ const CloseCell = ({
   const { data: executedTradeData, error } = useWaitForTransactionReceipt({
     hash: hash,
   });
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (executedTradeData?.status === "success") {
       toast.success("Position Closed");
+      // Refresh positions tables
+      queryClient.invalidateQueries({ queryKey: ["positions"] });
+      queryClient.invalidateQueries({ queryKey: ["closed-positions"] });
     }
   }, [executedTradeData]);
 
@@ -245,25 +251,55 @@ const CloseCell = ({
 
   return (
     <button
-      disabled={isPending}
+      disabled={
+        isPending ||
+        disabled ||
+        !optionId ||
+        !swapper ||
+        !swapData ||
+        !liquidityToExercise ||
+        swapper.length === 0 ||
+        swapData.length === 0 ||
+        liquidityToExercise.length === 0
+      }
       onClick={() => {
         if (disabled) {
           toast.error("Position cannot be closed right now. PnL < 0");
           return;
         }
-        writeContract({
-          address: optionMarketAddress as `0x${string}`,
-          abi: TRADE_EXECUTE_ABI,
-          functionName: "exerciseOption",
-          args: [
-            {
-              optionId,
-              swapper,
-              swapData,
-              liquidityToExercise,
-            },
-          ],
-        });
+        if (
+          !optionId ||
+          !swapper ||
+          !swapData ||
+          !liquidityToExercise ||
+          swapper.length === 0 ||
+          swapData.length === 0 ||
+          liquidityToExercise.length === 0
+        ) {
+          toast.error("Position data unavailable", {
+            description: "Required close parameters are missing.",
+          });
+          return;
+        }
+        try {
+          writeContract({
+            address: optionMarketAddress as `0x${string}`,
+            abi: TRADE_EXECUTE_ABI,
+            functionName: "exerciseOption",
+            args: [
+              {
+                optionId: BigInt(optionId),
+                swapper,
+                swapData: swapData as Hex[],
+                liquidityToExercise: liquidityToExercise.map((v) => BigInt(v)),
+              },
+            ],
+          });
+        } catch (e: any) {
+          toast.error("Position Close Failed", {
+            description: e?.message ?? "Please try again later.",
+          });
+        }
       }}
       className={cn(
         "text-[#EC5058] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
