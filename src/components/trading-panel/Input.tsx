@@ -1,5 +1,5 @@
 import { useMarketData } from "@/context/MarketDataProvider";
-import { formatTokenDisplayCondensed } from "@/lib/format";
+// no truncation in trading form per requirement
 import { preventMinusAndEKey, preventPasteNegative } from "@/lib/helper";
 import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 import type { AnyFieldApi } from "@tanstack/react-form";
@@ -57,12 +57,9 @@ const Input = ({
         />
         <div className="text-[#9CA3AF] text-xs font-medium whitespace-nowrap truncate">
           {primePoolPriceData?.currentPrice && field.state.value
-            ? formatTokenDisplayCondensed(
-              Big(primePoolPriceData?.currentPrice)
+            ? Big(primePoolPriceData?.currentPrice)
                 .mul(Big(field.state.value))
-                .toString(),
-              selectedTokenPair[1].decimals
-            )
+                .toString()
             : "--"}{" "}
           {selectedTokenPair[1].symbol}
         </div>

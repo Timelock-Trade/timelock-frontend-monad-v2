@@ -213,3 +213,10 @@ function formatLargeTokenValue(
     formats[formats.length - 1].options
   ).format(value);
 }
+
+// Truncate a numeric value to a fixed number of decimals (ROUND_DOWN) and strip trailing zeros
+export function truncateDecimals(value: string | number, decimals: number): string {
+  const bn = toBigNumber(value);
+  const truncated = bn.decimalPlaces(decimals, BigNumber.ROUND_DOWN);
+  return stripTrailingZeros(truncated.toFixed(decimals));
+}

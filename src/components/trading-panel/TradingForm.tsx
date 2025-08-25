@@ -19,7 +19,6 @@ import { TRADE_PREVIEW_ABI } from "@/lib/abis/tradePreviewAbi";
 import { formatUnits, parseUnits, erc20Abi } from "viem";
 import { Big } from "big.js";
 import { TRADE_EXECUTE_ABI } from "@/lib/abis/tradeExecuteAbi";
-import { formatTokenDisplayCondensed } from "@/lib/format";
 import { useEffect, useState } from "react";
 import { USDC } from "@/lib/tokens";
 import { toast } from "sonner";
@@ -28,6 +27,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { monad } from "@/lib/chains";
 import { useModal } from "connectkit";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { YouPayInfoDialog } from "../dialog/YouPayInfoDialog";
 
 interface TradePreviewStep {
   amount: bigint;
@@ -129,6 +129,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
     : undefined;
   const protocolFee = tradeData?.protocolFee;
   const amountFromPreview = tradeData?.steps[0].amount;
+  const [isYouPayInfoOpen, setIsYouPayInfoOpen] = useState(false);
 
   useEffect(() => {
     if (isError) {
@@ -344,14 +345,23 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
           </div>
         </div>
         <div className={`mt-5 mb-3 text-sm font-medium text-white ${!hasEnteredAmount ? 'invisible' : ''}`}>
-          You Pay{" "}
-          {totalCost
-            ? formatTokenDisplayCondensed(
-                formatUnits(totalCost, selectedTokenPair[1].decimals),
-                selectedTokenPair[1].decimals
-              )
-            : "--"}{" "}
-          {selectedTokenPair[1].symbol}
+          <span className="inline-flex items-center gap-2">
+            <span>You Pay</span>
+            <span>
+              {totalCost
+                ? formatUnits(totalCost, selectedTokenPair[1].decimals)
+                : "--"}{" "}
+              {selectedTokenPair[1].symbol}
+            </span>
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-full border border-[#282324] text-[#9CA3AF] hover:text-white hover:border-[#3a3536] transition-colors w-4 h-4 text-[10px] leading-none"
+              aria-label="Explain You Pay"
+              onClick={() => setIsYouPayInfoOpen(true)}
+            >
+              i
+            </button>
+          </span>
         </div>
 
         <form.Subscribe
@@ -399,6 +409,19 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
                     isError ||
                     isPending
                   }
+                />
+                <YouPayInfoDialog
+                  isOpen={isYouPayInfoOpen}
+                  setIsOpen={setIsYouPayInfoOpen}
+                  premiumCost={premiumCost}
+                  protocolFee={protocolFee}
+                  totalCost={totalCost}
+                  leverage={leverageValue}
+                  callAsset={selectedTokenPair[0]}
+                  putAsset={selectedTokenPair[1]}
+                  amount={amount}
+                  currentPrice={primePoolPriceData?.currentPrice?.toString() || null}
+                  isLong={isLong}
                 />
               </>
             );

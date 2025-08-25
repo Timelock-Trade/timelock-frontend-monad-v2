@@ -8,12 +8,12 @@ import { allTokens } from "@/lib/tokens";
 import { formatUnits } from "viem";
 import Big from "big.js";
 import { useMarketData } from "@/context/MarketDataProvider";
-import { formatTokenDisplayCondensed } from "@/lib/format";
 import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { TRADE_EXECUTE_ABI } from "@/lib/abis/tradeExecuteAbi";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { truncateDecimals } from "@/lib/format";
 
 const columnHelper = createColumnHelper<Position>();
 
@@ -77,7 +77,7 @@ const columns = [
 
       return (
         <span className="text-sm text-white font-semibold">
-          {formatTokenDisplayCondensed(amount, token.decimals)} {token.symbol}
+          {truncateDecimals(amount, 2)} {token.symbol}
         </span>
       );
     },
@@ -103,12 +103,7 @@ const columns = [
           .symbol;
       return (
         <span className="text-sm text-white font-semibold">
-          {value
-            ? formatTokenDisplayCondensed(
-                formatUnits(BigInt(value), decimals),
-                decimals
-              )
-            : "--"}{" "}
+          {value ? truncateDecimals(formatUnits(BigInt(value), decimals), 2) : "--"}{" "}
           {symbol}
         </span>
       );
@@ -129,10 +124,14 @@ const columns = [
 
       const hoursRemaining = Math.floor(remaining / 3600);
       const minutesRemaining = Math.floor((remaining % 3600) / 60);
+      const secondsRemaining = Math.max(0, remaining % 60);
 
       return (
         <div className="text-[11px] text-white/[0.5] flex flex-col gap-1">
-          <span>{`${hoursRemaining}h ${minutesRemaining}m`}</span>
+          <div className="flex items-center gap-1">
+            <HourglassIcon />
+            <span>{`${hoursRemaining}h ${minutesRemaining}m ${secondsRemaining}s`}</span>
+          </div>
           <div className="w-[130px] h-[10px] bg-[#1A1A1A] rounded-md relative overflow-hidden">
             <div
               className={`absolute top-0 left-0 h-full rounded-md ${
@@ -172,26 +171,33 @@ const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
   const callAsset =
     allTokens[info.row.original.callAsset?.toLowerCase() as `0x${string}`];
 
-  const pnl = isCall
-    ? formatTokenDisplayCondensed(
-        formatUnits(BigInt(value), putAsset.decimals),
-        putAsset.decimals
-      )
+  const rawPnl = isCall
+    ? Big(formatUnits(BigInt(value), putAsset.decimals))
     : primePoolPriceData?.currentPrice
-    ? formatTokenDisplayCondensed(
-        Big(formatUnits(BigInt(value), callAsset.decimals))
-          .mul(Big(primePoolPriceData.currentPrice))
-          .toString(),
-        putAsset.decimals
+    ? Big(formatUnits(BigInt(value), callAsset.decimals)).mul(
+        Big(primePoolPriceData.currentPrice)
       )
     : null;
+
+  const pnl = rawPnl ? truncateDecimals(rawPnl.toString(), 2) : null;
+
+  // Percent change relative to amount paid if available
+  let percent: string | null = null;
+  try {
+    const paid = Big(
+      formatUnits(BigInt(info.row.original.paid), putAsset.decimals)
+    );
+    if (rawPnl && paid.gt(0)) {
+      percent = truncateDecimals(rawPnl.div(paid).minus(1).mul(100).toString(), 1);
+    }
+  } catch {}
 
   return (
     <div className="flex flex-row items-center gap-1 text-[13px]">
       {Big(value).lte(0) ? (
         <div className="flex flex-row items-center gap-2">
           <span className="line-through text-white/[0.5]">{pnl ?? "--"} </span>
-          <span className="">0 USDC</span>
+          <span className="">0 USDC{percent ? ` (${percent}%)` : ""}</span>
           <span className="underline text-white/[0.5] underline-offset-2 cursor-pointer">
             How?
           </span>
@@ -203,6 +209,7 @@ const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
             allTokens[info.row.original.putAsset.toLowerCase() as `0x${string}`]
               .symbol
           }
+          {percent ? ` (${percent}%)` : ""}
         </span>
       )}
     </div>
@@ -281,13 +288,34 @@ const CurrentPriceCell = () => {
   return (
     <span className="text-sm text-white font-semibold">
       {primePoolPriceData?.currentPrice
-        ? formatTokenDisplayCondensed(
+        ? truncateDecimals(
             Big(primePoolPriceData?.currentPrice).toString(),
-            selectedTokenPair[1].decimals
+            2
           )
         : "--"}{" "}
       {selectedTokenPair[1].symbol}
     </span>
   );
 };
+
+const HourglassIcon = ({ size = 11 }: { size?: number }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="animate-spin"
+  >
+    <path d="M7 2h10" />
+    <path d="M7 22h10" />
+    <path d="M9 4v4l3 3 3-3V4" />
+    <path d="M9 20v-4l3-3 3 3v4" />
+  </svg>
+);
+
 export default columns;

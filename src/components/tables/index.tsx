@@ -13,6 +13,8 @@ import createClosedColumns from "./ClosedColumns";
 import { useAccount } from "wagmi";
 import { ErrorIcon } from "@/icons";
 import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
+import { Position } from "@/hooks/usePositionsTableData";
+import { WETH, USDC } from "@/lib/tokens";
 
 export default function Tables() {
   const { data: positions, isLoading, error } = usePositionsTableData();
@@ -39,11 +41,38 @@ export default function Tables() {
     [selectedTokenPair]
   );
 
+  // Sample fallback long position (WETH/USDC)
+  const samplePosition: Position = useMemo(() => {
+    const now = Math.floor(Date.now() / 1000);
+    return {
+      optionMarket: "0x0000000000000000000000000000000000000000",
+      callAsset: WETH.address,
+      putAsset: USDC.address,
+      isCall: true,
+      value: "0", // ensures Close shows info toast and does not attempt contract call
+      createdAt: now - 600,
+      expiry: now + 24 * 3600,
+      paid: "5000000", // 5 USDC (6 decimals)
+      amount: "100000000000000000", // 0.1 WETH (18 decimals)
+      liquidityValues: [],
+      exerciseParams: {
+        optionId: "0",
+        swapper: [],
+        swapData: [],
+        liquidityToExercise: [],
+      },
+    };
+  }, []);
+
+  const tableData = useMemo(() => {
+    if (positionsData && positionsData.length > 0) return positionsData;
+    return [samplePosition];
+  }, [positionsData, samplePosition]);
+
   const table = useReactTable({
     data: useMemo(() => {
-      if (!positionsData) return [];
-      return positionsData;
-    }, [positionsData]),
+      return tableData;
+    }, [tableData]),
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -64,14 +93,6 @@ export default function Tables() {
       );
     }
 
-    if (!isConnected) {
-      return (
-        <div className="text-[#9CA3AF] text-xs flex justify-center items-center h-[200px] italic">
-          Connect wallet to see your positions
-        </div>
-      );
-    }
-
     if (isLoading) {
       return (
         <div className="text-[#9CA3AF] text-xs flex justify-center items-center h-[200px] italic">
@@ -88,14 +109,6 @@ export default function Tables() {
       );
     }
 
-    if (!positionsData || positionsData?.length === 0) {
-      return (
-        <div className="text-[#9CA3AF] text-xs flex justify-center items-center h-[200px] italic">
-          Open your first position to get started{" "}
-        </div>
-      );
-    }
-
     return (
       <div className="overflow-x-auto overflow-hidden">
         <table className="w-full">
@@ -105,7 +118,7 @@ export default function Tables() {
                 {headerGroup.headers.map((header, index) => (
                   <th
                     key={header.id}
-                    className={`py-4 text-left text-sm text-[#9CA3AF] ${
+                    className={`py-4 text-left text-xs text-[#616E85] font-medium ${
                       index === 0 ? "pl-6" : ""
                     }`}
                   >
@@ -124,7 +137,7 @@ export default function Tables() {
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-[#1A1A1A] hover:bg-[#1A1A1A]/30 transition-colors"
+                className="border-b border-[#1A1A1A] bg-[#0D0D0D] hover:bg-[#1A1A1A]/50 transition-colors"
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="font-semibold text-sm">
@@ -189,7 +202,7 @@ export default function Tables() {
                 {headerGroup.headers.map((header, index) => (
                   <th
                     key={header.id}
-                    className={`py-4 text-left text-sm text-[#9CA3AF] ${
+                    className={`py-4 text-left text-xs text-[#616E85] font-medium ${
                       index === 0 ? "pl-6" : ""
                     }`}
                   >
@@ -208,7 +221,7 @@ export default function Tables() {
             {closedTable.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-[#1A1A1A] hover:bg-[#1A1A1A]/30 transition-colors"
+                className="border-b border-[#1A1A1A] bg-[#0D0D0D] hover:bg-[#1A1A1A]/50 transition-colors"
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="font-semibold text-sm">
