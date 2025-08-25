@@ -1,0 +1,81 @@
+import { createColumnHelper } from "@tanstack/react-table";
+import { ClosedPosition } from "@/hooks/useClosedPositionsData";
+import { LongIcon, ShortIcon } from "@/icons";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { Token } from "@/lib/tokens";
+
+const columnHelper = createColumnHelper<ClosedPosition>();
+
+const formatTs = (ts: number) => {
+  try {
+    return new Date(ts * 1000).toLocaleString();
+  } catch {
+    return "--";
+  }
+};
+
+const createClosedColumns = (selectedTokenPair: Token[]) => [
+  columnHelper.accessor("isCall", {
+    header: "Position",
+    cell: (info) => {
+      const callToken = selectedTokenPair[0];
+      return (
+        <div className="pl-6 py-2">
+          <div
+            className={cn(
+              "flex items-center flex-row gap-2 border px-[12px] py-[6px] rounded-md w-fit border-[#1A1A1A]",
+              info.getValue() ? "text-[#16C784]" : "text-[#EC5058]"
+            )}
+          >
+            {info.getValue() ? <LongIcon /> : <ShortIcon />}
+            <div className="flex flex-col gap-[2px]">
+              <div className="flex flex-row gap-1 items-center">
+                <Image src={callToken.image} alt={callToken.symbol} width={12} height={12} />
+                <span className="text-sm text-white">{callToken.symbol}</span>
+              </div>
+              <span
+                className={`text-[10px] uppercase font-semibold opacity-50 ${
+                  info.getValue() ? "text-[#19DE92]" : "text-[#EC5058]"
+                }`}
+              >
+                {info.getValue() ? "Long" : "Short"}
+              </span>
+            </div>
+          </div>
+        </div>
+      );
+    },
+  }),
+  columnHelper.accessor("strike", {
+    header: "Strike Price",
+    cell: (info) => {
+      const raw = info.getValue();
+      if (!raw) return <span className="text-sm text-white">--</span>;
+      const asNumber = Number(raw) / 1e18;
+      const formatted = isFinite(asNumber) ? asNumber.toFixed(2) : "--";
+      // Display in quote token (assume token[1])
+      return (
+        <span className="text-sm text-white font-semibold">
+          {formatted} {selectedTokenPair[1].symbol}
+        </span>
+      );
+    },
+  }),
+  columnHelper.accessor("createdAt", {
+    header: "Opened",
+    cell: (info) => (
+      <span className="text-sm text-white">{formatTs(info.getValue())}</span>
+    ),
+  }),
+  columnHelper.accessor("expiry", {
+    header: "Expired",
+    cell: (info) => (
+      <span className="text-sm text-white">{formatTs(info.getValue())}</span>
+    ),
+  }),
+];
+
+export default createClosedColumns;
+
+
