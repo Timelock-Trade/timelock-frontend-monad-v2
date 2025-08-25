@@ -421,11 +421,8 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
                 <YouPayInfoDialog
                   isOpen={isYouPayInfoOpen}
                   setIsOpen={setIsYouPayInfoOpen}
-                  premiumCost={premiumCost}
-                  protocolFee={protocolFee}
                   totalCost={totalCost}
                   leverage={leverageValue}
-                  callAsset={selectedTokenPair[0]}
                   putAsset={selectedTokenPair[1]}
                   amount={amount}
                   currentPrice={primePoolPriceData?.currentPrice?.toString() || null}

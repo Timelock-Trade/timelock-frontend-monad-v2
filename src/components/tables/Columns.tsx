@@ -128,7 +128,6 @@ const columns = [
 
       const hoursRemaining = Math.floor(remaining / 3600);
       const minutesRemaining = Math.floor((remaining % 3600) / 60);
-      const secondsRemaining = Math.max(0, remaining % 60);
 
       return (
         <div className="text-[10px] md:text-[11px] text-white/[0.5] flex flex-col gap-1">

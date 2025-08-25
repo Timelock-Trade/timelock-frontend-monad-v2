@@ -10,11 +10,8 @@ import Big from "big.js";
 export function YouPayInfoDialog({
   isOpen,
   setIsOpen,
-  premiumCost,
-  protocolFee,
   totalCost,
   leverage,
-  callAsset,
   putAsset,
   amount,
   currentPrice,
@@ -22,11 +19,8 @@ export function YouPayInfoDialog({
 }: {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  premiumCost: bigint | undefined;
-  protocolFee: bigint | undefined;
   totalCost: bigint | undefined;
   leverage: string | null;
-  callAsset: Token;
   putAsset: Token;
   amount: string; // raw input amount in callAsset units for long, putAsset units for short
   currentPrice: string | null; // in putAsset terms per 1 callAsset
@@ -74,20 +68,7 @@ export function YouPayInfoDialog({
 
   const marginStr = margin ?? "--";
 
-  // Breakdown numbers (no truncation)
-  const premiumStr = premiumCost !== undefined ? formatUnits(premiumCost, putAsset.decimals) : "--";
-  const feeStr = protocolFee !== undefined ? formatUnits(protocolFee, putAsset.decimals) : "--";
-  const bufferStr = useMemo(() => {
-    try {
-      if (totalCost === undefined || premiumCost === undefined || protocolFee === undefined) return "--";
-      const t = Big(formatUnits(totalCost, putAsset.decimals));
-      const p = Big(formatUnits(premiumCost, putAsset.decimals));
-      const f = Big(formatUnits(protocolFee, putAsset.decimals));
-      return t.minus(p).minus(f).toString();
-    } catch {
-      return "--";
-    }
-  }, [totalCost, premiumCost, protocolFee, putAsset.decimals]);
+
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
