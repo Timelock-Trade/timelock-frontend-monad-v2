@@ -9,4 +9,38 @@
   /* Fallback enforcement for some UI elements */
   .tv-chart, .tv-dialog, .chart-container {
     font-family: Arial, Helvetica, sans-serif !important;
-}
+  }
+
+  /* Responsive text sizing for chart elements */
+  @media (max-width: 768px) {
+    .tv-chart {
+      font-size: 12px !important;
+    }
+    
+    /* Scale down buttons and controls on mobile */
+    .tv-control-bar, .tv-toolbar {
+      font-size: 11px !important;
+    }
+    
+    /* Make clickable areas larger for touch devices */
+    .tv-button, .tv-control {
+      min-height: 32px !important;
+      min-width: 32px !important;
+    }
+  }
+  
+  @media (max-width: 1024px) and (min-width: 769px) {
+    .tv-chart {
+      font-size: 13px !important;
+    }
+    
+    .tv-control-bar, .tv-toolbar {
+      font-size: 12px !important;
+    }
+  }
+  
+  @media (min-width: 1025px) {
+    .tv-chart {
+      font-size: 14px !important;
+    }
+  }
