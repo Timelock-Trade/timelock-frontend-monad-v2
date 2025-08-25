@@ -95,6 +95,14 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
     },
   });
 
+  // Filter out 20 minutes (1200 seconds) and 3 days (259200 seconds)
+  const filteredTtlIV = ttlIV.filter((item) => {
+    return item.ttl !== 1200 && item.ttl !== 259200;
+  });
+
+  // Ensure selectedDurationIndex is valid for the filtered array
+  const safeSelectedDurationIndex = Math.min(selectedDurationIndex, filteredTtlIV.length - 1);
+
   const args = [
     optionMarketAddress,
     LIQUIDITY_HANDLER_ADDRESS_USDC,
@@ -106,7 +114,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
       : isLong
       ? scaledAmount
       : scaledAmountInPutAsset,
-    ttlIV[selectedDurationIndex]?.ttl,
+    filteredTtlIV[safeSelectedDurationIndex]?.ttl,
     isMax ? balanceData?.value : 0,
   ];
 
@@ -179,7 +187,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
     return `${Math.floor(ttl / 86400)}D`;
   };
 
-  const durations = ttlIV.map((item) => formatDuration(item.ttl));
+  const durations = filteredTtlIV.map((item) => formatDuration(item.ttl));
 
   const { data: approvalHash, writeContract: writeApproval } =
     useWriteContract();
@@ -261,7 +269,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
           optionTicks: [optionTicks],
           tickLower: tradeData.steps[0].tickLower,
           tickUpper: tradeData.steps[0].tickUpper,
-          ttl: ttlIV[selectedDurationIndex].ttl,
+          ttl: filteredTtlIV[safeSelectedDurationIndex].ttl,
           isCall: isLong,
           maxCostAllowance: totalCost,
         },
@@ -332,7 +340,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
         {/* <BlueStrokeIcon className="absolute bottom-[96px] -left-[20px]" /> */}
         <DurationSelector
           durations={durations}
-          selectedDurationIndex={selectedDurationIndex}
+          selectedDurationIndex={safeSelectedDurationIndex}
           setSelectedDurationIndex={setSelectedDurationIndex}
         />
         <div className="mt-6">
@@ -385,7 +393,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
                   leverage={leverageValue}
                   youPay={totalCost}
                   premiumCost={premiumCost}
-                  duration={formatDuration(ttlIV[selectedDurationIndex]?.ttl)}
+                  duration={formatDuration(filteredTtlIV[safeSelectedDurationIndex]?.ttl)}
                   callAsset={selectedTokenPair[0]}
                   putAsset={selectedTokenPair[1]}
                   isLong={isLong}
