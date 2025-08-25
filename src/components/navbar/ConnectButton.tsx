@@ -9,11 +9,13 @@ import { USDC } from "@/lib/tokens";
 import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 import { formatTokenDisplayCondensed } from "@/lib/format";
 import { useEffect, useState } from "react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const ConnectButton = () => {
   const { selectedTokenPair } = useSelectedTokenPair();
   const { isConnected, address } = useAccount();
   const [isMounted, setIsMounted] = useState(false);
+  const isMobile = useIsMobile();
 
   // Prevent hydration mismatch by only rendering after mount
   useEffect(() => {
@@ -31,7 +33,7 @@ const ConnectButton = () => {
 
   return (
     <div className="flex flex-row items-center bg-[#131313] rounded-[14px] overflow-hidden">
-      {isConnected && isMounted && (
+      {isConnected && isMounted && !isMobile && (
         <div className="w-fit flex h-full px-3 pl-5 text-sm">
           {isLoading ? (
             <div className="h-4 w-16 animate-pulse rounded bg-gray-700" />
@@ -47,23 +49,33 @@ const ConnectButton = () => {
           )}
         </div>
       )}
-      <div className="min-h-[42px] w-[138px]">
+      <div className="min-h-[42px] transition-transform duration-150 ease-out hover:scale-[1.04] active:scale-[0.98] will-change-transform">
         <ConnectKitButton.Custom>
-          {({ isConnected, show, address }) => (
+          {({ isConnected, show, address, truncatedAddress, ensName }) => (
             <button
               onClick={show}
               className={cn(
-                "w-[138px] h-[42px] whitespace-nowrap rounded-[14px] bg-white px-4 py-2 text-[#0D0D0D] font-semibold text-[15px] cursor-pointer",
+                "h-[42px] whitespace-nowrap rounded-[14px] bg-white text-[#0D0D0D] font-semibold text-[15px] cursor-pointer",
+                "transition-all duration-200",
+                isMobile 
+                  ? "px-3 min-w-[80px]" 
+                  : "px-4 min-w-[120px]",
                 isConnected && "text-[#D1D5DA] font-bold bg-white/[0.06]"
               )}
             >
               {isConnected && address ? (
                 <div className="flex flex-row items-center gap-2 justify-center">
-                  {truncateAddress(address, 4)}
+                  {isMobile ? (
+                    // On mobile, show only truncated address without ENS for space
+                    truncateAddress(address, 3)
+                  ) : (
+                    // On desktop, show ENS name if available, otherwise truncated address
+                    ensName || truncatedAddress
+                  )}
                   <ArrowDownIcon />
                 </div>
               ) : (
-                "Connect Wallet"
+                isMobile ? "Connect" : "Connect"
               )}
             </button>
           )}

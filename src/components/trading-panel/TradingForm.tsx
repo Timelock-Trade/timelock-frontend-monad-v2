@@ -27,6 +27,7 @@ import { CreatePositionDialog } from "../dialog/CreatePositionDialog";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { monad } from "@/lib/chains";
 import { useModal } from "connectkit";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface TradePreviewStep {
   amount: bigint;
@@ -54,6 +55,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
   const { address, isConnected, chainId } = useAccount();
   const { setOpen } = useModal();
   const isChainSupported = chainId === monad.chainId;
+  const isMobile = useIsMobile(768);
   const {
     ttlIV,
     selectedDurationIndex,
@@ -168,6 +170,8 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
   };
 
   const leverageValue = calculateLeverage();
+
+  const hasEnteredAmount = !!amount && Big(amount).gt(0);
 
   const formatDuration = (ttl: number) => {
     if (ttl < 3600) return `${Math.floor(ttl / 60)}m`;
@@ -300,26 +304,30 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
         <div className="text-sm font-medium pb-3">
           {isLong ? "You Long" : "You Short"}
         </div>
-        <form.Field
-          name="amount"
-          validators={{
-            // TODO: Add validation for max amount and probably use zod
-            onChange: ({ value }) =>
-              !value
-                ? "Amount is required"
-                : Number(value) <= 0
-                ? "Amount must be greater than 0"
-                : undefined,
-          }}
-        >
-          {(field) => <Input setIsMax={setIsMax} field={field} />}
-        </form.Field>
-        <div className="flex mt-2 mb-6 flex-row gap-1 items-center border border-[#282324] rounded-[8px] w-fit px-2 py-1">
-          <FlashIcon />
-          <span className="text-sm font-medium text-[#1981F3] bg-[#1a1a1a80]">
-            {leverageValue ? leverageValue + "x Leverage" : "--"}
-          </span>
+        <div className="mb-4">
+          <form.Field
+            name="amount"
+            validators={{
+              // TODO: Add validation for max amount and probably use zod
+              onChange: ({ value }) =>
+                !value
+                  ? "Amount is required"
+                  : Number(value) <= 0
+                  ? "Amount must be greater than 0"
+                  : undefined,
+            }}
+          >
+            {(field) => <Input setIsMax={setIsMax} field={field} />}
+          </form.Field>
         </div>
+        {hasEnteredAmount && (
+          <div className={`flex mt-2 mb-6 flex-row gap-1 items-center border border-[#282324] rounded-[8px] w-fit ${isMobile ? 'px-2 py-1' : 'px-2 py-1'}`}>
+            <FlashIcon />
+            <span className={`${isMobile ? 'text-sm' : 'text-sm'} font-medium text-[#1981F3] bg-[#1a1a1a80]`}>
+              {leverageValue ? leverageValue + "x Leverage" : "--"}
+            </span>
+          </div>
+        )}
         <div className="text-sm font-medium pb-3">For</div>
         {/* <BlueStrokeIcon className="absolute bottom-[96px] -left-[20px]" /> */}
         <DurationSelector
@@ -328,12 +336,14 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
           setSelectedDurationIndex={setSelectedDurationIndex}
         />
         <div className="mt-6">
-          <TradeExecutionDetails
-            premiumCost={premiumCost}
-            protocolFee={protocolFee}
-          />
+          <div className={`${!hasEnteredAmount ? 'invisible' : ''}`}>
+            <TradeExecutionDetails
+              premiumCost={premiumCost}
+              protocolFee={protocolFee}
+            />
+          </div>
         </div>
-        <div className="mt-5 mb-3 text-sm font-medium text-white">
+        <div className={`mt-5 mb-3 text-sm font-medium text-white ${!hasEnteredAmount ? 'invisible' : ''}`}>
           You Pay{" "}
           {totalCost
             ? formatTokenDisplayCondensed(
@@ -394,7 +404,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
             );
           }}
         </form.Subscribe>
-        <div className="text-xs pt-3 max-w-sm mx-auto text-center text-[#9CA3AF]">
+        <div className={`text-xs pt-3 ${isMobile ? 'max-w-full' : 'max-w-sm'} mx-auto text-center text-[#9CA3AF]`}>
           The premium you pay on timelock is used to protect your trade from
           liquidations even if the asset price goes to 0.
         </div>

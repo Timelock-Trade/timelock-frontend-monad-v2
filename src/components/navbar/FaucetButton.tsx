@@ -42,14 +42,15 @@ const FaucetButton = () => {
         href="https://faucet.monad.xyz/"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="Mint"
         className={cn(
-          "text-sm font-medium px-3 py-3 rounded-full bg-[#131313]",
+          "text-sm font-medium p-2 md:px-3 md:py-3 rounded-full bg-[#131313]",
           "cursor-pointer hover:bg-[#1a1a1a] disabled:opacity-50 disabled:cursor-not-allowed"
         )}
       >
         <div className="flex flex-row items-center gap-2">
           <FaucetIcon />
-          Mint
+          <span className="hidden md:inline">Mint</span>
         </div>
       </a>
     </>

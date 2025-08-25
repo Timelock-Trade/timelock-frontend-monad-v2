@@ -22,8 +22,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
+      </head>
       {/* {process.env.NODE_ENV === "development" && <ReactScan />} */}
-      <body className={`${ibmFont.variable} antialiased`}>
+      <body className={`${ibmFont.variable} antialiased min-h-dvh bg-[#0D0D0D] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]`}>
         <Provider>{children}</Provider>
       </body>
     </html>

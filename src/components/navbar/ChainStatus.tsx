@@ -20,22 +20,24 @@ const ChainStatus = () => {
   return (
     <div
       className={cn(
-        "text-sm font-medium px-3 py-3 rounded-full bg-[#131313]",
+        "text-sm font-medium p-2 md:px-3 md:py-3 rounded-full bg-[#131313]",
         !isConnected || isChainSupported
           ? ""
           : "cursor-pointer hover:bg-[#1a1a1a]"
       )}
       onClick={handleSwitchToMonad}
+      aria-label={!isConnected || isChainSupported ? "Monad Testnet" : "Unsupported network"}
+      role="button"
     >
       {!isConnected || isChainSupported ? (
         <div className="flex flex-row items-center gap-2">
           <Image src="/tokens/monad.svg" alt="Monad" width={16} height={16} />
-          Monad Testnet
+          <span className="hidden md:inline">Monad Testnet</span>
         </div>
       ) : (
         <div className="flex flex-row items-center gap-[6px]">
           <UnsupportedIcon />
-          Unsupported
+          <span className="hidden md:inline">Unsupported</span>
         </div>
       )}
     </div>

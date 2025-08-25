@@ -304,6 +304,89 @@ const FaucetIcon = () => (
   </svg>
 );
 
+// ADD: Non-boxed trend icons
+const LongTrendIcon = ({
+  width = 15,
+  height = 15,
+}: {
+  width?: number;
+  height?: number;
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    viewBox="0 0 15 15"
+    fill="none"
+  >
+    <g clipPath="url(#clip0_long_trend)">
+      <path
+        d="M9.51562 4.29993H13.5156V8.29993"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M13.5156 4.29993L7.86562 9.94993C7.77216 10.0415 7.6465 10.0929 7.51562 10.0929C7.38475 10.0929 7.25909 10.0415 7.16563 9.94993L4.86562 7.64993C4.77216 7.55831 4.6465 7.507 4.51562 7.507C4.38475 7.507 4.25909 7.55831 4.16563 7.64993L0.515625 11.2999"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_long_trend">
+        <rect
+          width={14}
+          height={14}
+          fill="white"
+          transform="translate(0.015625 0.799927)"
+        />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const ShortTrendIcon = ({
+  width = 15,
+  height = 15,
+}: {
+  width?: number;
+  height?: number;
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    viewBox="0 0 15 15"
+    fill="none"
+  >
+    <g clipPath="url(#clip0_short_trend)">
+      <path
+        d="M9.51611 10.8999H13.5161V6.8999"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M13.5161 10.8999L7.86611 5.2499C7.77265 5.15829 7.64699 5.10697 7.51611 5.10697C7.38524 5.10697 7.25958 5.15829 7.16611 5.2499L4.86611 7.5499C4.77265 7.64152 4.64699 7.69283 4.51611 7.69283C4.38524 7.69283 4.25958 7.64152 4.16611 7.5499L0.516113 3.8999"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_short_trend">
+        <rect
+          width={14}
+          height={14}
+          fill="white"
+          transform="translate(0.0161133 0.399902)"
+        />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
 export {
   ChevronDown,
   LongIcon,
@@ -318,4 +401,6 @@ export {
   ErrorIcon,
   ResetIcon,
   FaucetIcon,
+  LongTrendIcon,
+  ShortTrendIcon,
 };
