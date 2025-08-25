@@ -24,10 +24,10 @@ const columns = [
   columnHelper.accessor("isCall", {
     header: "Position",
     cell: (info) => (
-      <div className="pl-6 py-2">
+      <div className="pl-4 md:pl-6 py-2">
         <div
           className={cn(
-            "flex items-center flex-row gap-2 border px-[12px] py-[6px] rounded-md w-fit border-[#1A1A1A]",
+            "flex items-center flex-row gap-1 md:gap-2 border px-2 md:px-[12px] py-1 md:py-[6px] rounded-md w-fit border-[#1A1A1A]",
             info.getValue() ? "text-[#16C784]" : "text-[#EC5058]"
           )}
         >
@@ -48,7 +48,7 @@ const columns = [
                 width={12}
                 height={12}
               />
-              <span className="text-sm text-white">
+              <span className="text-xs md:text-sm text-white">
                 {
                   allTokens[
                     info.row.original.callAsset?.toLowerCase() as `0x${string}`
@@ -78,8 +78,8 @@ const columns = [
         : "";
 
       return (
-        <span className="text-sm text-white font-semibold">
-          {formatTokenDisplayCondensed(amount, token.decimals)} {token.symbol}
+        <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
+          {amount ? Number(amount).toFixed(2) : "0.00"} {token.symbol}
         </span>
       );
     },
@@ -104,12 +104,9 @@ const columns = [
         allTokens[info.row.original.putAsset.toLowerCase() as `0x${string}`]
           .symbol;
       return (
-        <span className="text-sm text-white font-semibold">
+        <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
           {value
-            ? formatTokenDisplayCondensed(
-                formatUnits(BigInt(value), decimals),
-                decimals
-              )
+            ? Number(formatUnits(BigInt(value), decimals)).toFixed(2)
             : "--"}{" "}
           {symbol}
         </span>
@@ -133,9 +130,9 @@ const columns = [
       const minutesRemaining = Math.floor((remaining % 3600) / 60);
 
       return (
-        <div className="text-[11px] text-white/[0.5] flex flex-col gap-1">
-          <span>{`${hoursRemaining}h ${minutesRemaining}m`}</span>
-          <div className="w-[130px] h-[10px] bg-[#1A1A1A] rounded-md relative overflow-hidden">
+        <div className="text-[10px] md:text-[11px] text-white/[0.5] flex flex-col gap-1">
+          <span className="whitespace-nowrap">{`${hoursRemaining}h ${minutesRemaining}m`}</span>
+          <div className="w-[100px] md:w-[130px] h-[8px] md:h-[10px] bg-[#1A1A1A] rounded-md relative overflow-hidden">
             <div
               className={`absolute top-0 left-0 h-full rounded-md ${
                 !info.row.original.isCall ? "bg-[#EC5058]" : "bg-[#19DE92]"
@@ -150,7 +147,7 @@ const columns = [
   columnHelper.display({
     id: "actions",
     cell: (info) => (
-      <div className="pr-4">
+      <div className="pr-2 md:pr-4">
         <CloseCell
           disabled={Big(info.row.original.value).lte(0)}
           optionId={info.row.original.exerciseParams?.optionId}
@@ -175,31 +172,27 @@ const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
     allTokens[info.row.original.callAsset?.toLowerCase() as `0x${string}`];
 
   const pnl = isCall
-    ? formatTokenDisplayCondensed(
-        formatUnits(BigInt(value), putAsset.decimals),
-        putAsset.decimals
-      )
+    ? Number(formatUnits(BigInt(value), putAsset.decimals)).toFixed(2)
     : primePoolPriceData?.currentPrice
-    ? formatTokenDisplayCondensed(
+    ? Number(
         Big(formatUnits(BigInt(value), callAsset.decimals))
           .mul(Big(primePoolPriceData.currentPrice))
-          .toString(),
-        putAsset.decimals
-      )
+          .toString()
+      ).toFixed(2)
     : null;
 
   return (
-    <div className="flex flex-row items-center gap-1 text-[13px]">
+    <div className="flex flex-row items-center gap-1 text-[11px] md:text-[13px]">
       {Big(value).lte(0) ? (
-        <div className="flex flex-row items-center gap-2">
-          <span className="line-through text-white/[0.5]">{pnl ?? "--"} </span>
-          <span className="">0 USDC</span>
-          <span className="underline text-white/[0.5] underline-offset-2 cursor-pointer">
+        <div className="flex flex-row items-center gap-1 md:gap-2">
+          <span className="line-through text-white/[0.5] whitespace-nowrap">{pnl ?? "--"} </span>
+          <span className="whitespace-nowrap">0 USDC</span>
+          <span className="underline text-white/[0.5] underline-offset-2 cursor-pointer hidden md:inline">
             How?
           </span>
         </div>
       ) : (
-        <span className="text-[#19DE92]">
+        <span className="text-[#19DE92] whitespace-nowrap">
           {pnl}{" "}
           {
             allTokens[info.row.original.putAsset.toLowerCase() as `0x${string}`]
@@ -302,7 +295,7 @@ const CloseCell = ({
         }
       }}
       className={cn(
-        "text-[#EC5058] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+        "text-[#EC5058] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer text-xs md:text-sm px-2 py-1 whitespace-nowrap"
       )}
     >
       Close
@@ -315,12 +308,9 @@ const CurrentPriceCell = () => {
   const { selectedTokenPair } = useSelectedTokenPair();
 
   return (
-    <span className="text-sm text-white font-semibold">
+    <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
       {primePoolPriceData?.currentPrice
-        ? formatTokenDisplayCondensed(
-            Big(primePoolPriceData?.currentPrice).toString(),
-            selectedTokenPair[1].decimals
-          )
+        ? Number(primePoolPriceData?.currentPrice).toFixed(2)
         : "--"}{" "}
       {selectedTokenPair[1].symbol}
     </span>

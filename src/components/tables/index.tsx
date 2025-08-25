@@ -98,15 +98,15 @@ export default function Tables() {
 
     return (
       <div className="overflow-x-auto overflow-hidden">
-        <table className="w-full">
+        <table className="w-full min-w-[800px] md:min-w-full">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="border-b border-[#1A1A1A]">
                 {headerGroup.headers.map((header, index) => (
                   <th
                     key={header.id}
-                    className={`py-4 text-left text-sm text-[#9CA3AF] ${
-                      index === 0 ? "pl-6" : ""
+                    className={`py-3 md:py-4 text-left text-xs md:text-sm text-[#9CA3AF] whitespace-nowrap ${
+                      index === 0 ? "pl-4 md:pl-6" : "px-2 md:px-4"
                     }`}
                   >
                     {header.isPlaceholder
@@ -126,8 +126,10 @@ export default function Tables() {
                 key={row.id}
                 className="border-b border-[#1A1A1A] hover:bg-[#1A1A1A]/30 transition-colors"
               >
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="font-semibold text-sm">
+                {row.getVisibleCells().map((cell, index) => (
+                  <td key={cell.id} className={`font-semibold text-xs md:text-sm ${
+                    index === 0 ? "" : "px-2 md:px-4"
+                  }`}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -182,15 +184,15 @@ export default function Tables() {
 
     return (
       <div className="overflow-x-auto overflow-hidden">
-        <table className="w-full">
+        <table className="w-full min-w-[800px] md:min-w-full">
           <thead>
             {closedTable.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="border-b border-[#1A1A1A]">
                 {headerGroup.headers.map((header, index) => (
                   <th
                     key={header.id}
-                    className={`py-4 text-left text-sm text-[#9CA3AF] ${
-                      index === 0 ? "pl-6" : ""
+                    className={`py-3 md:py-4 text-left text-xs md:text-sm text-[#9CA3AF] whitespace-nowrap ${
+                      index === 0 ? "pl-4 md:pl-6" : "px-2 md:px-4"
                     }`}
                   >
                     {header.isPlaceholder
@@ -210,8 +212,10 @@ export default function Tables() {
                 key={row.id}
                 className="border-b border-[#1A1A1A] hover:bg-[#1A1A1A]/30 transition-colors"
               >
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="font-semibold text-sm">
+                {row.getVisibleCells().map((cell, index) => (
+                  <td key={cell.id} className={`font-semibold text-xs md:text-sm ${
+                    index === 0 ? "" : "px-2 md:px-4"
+                  }`}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -225,9 +229,9 @@ export default function Tables() {
 
   return (
     <div className="border border-[#1A1A1A] rounded-md mt-4 relative">
-      <div className="flex flex-row items-center border-b border-[#1A1A1A] gap-6 pl-6 ">
+      <div className="flex flex-row items-center border-b border-[#1A1A1A] gap-4 md:gap-6 px-4 md:px-6 ">
         <button
-          className={`text-sm font-semibold py-4 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out ${
+          className={`text-xs md:text-sm font-semibold py-3 md:py-4 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out whitespace-nowrap ${
             activeTab === "open"
               ? "text-white after:w-full after:opacity-100"
               : "text-white/60 hover:text-white after:w-0 after:opacity-0"
@@ -237,7 +241,7 @@ export default function Tables() {
           Open Positions
         </button>
         <button
-          className={`text-sm font-semibold py-4 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out ${
+          className={`text-xs md:text-sm font-semibold py-3 md:py-4 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out whitespace-nowrap ${
             activeTab === "closed"
               ? "text-white after:w-full after:opacity-100"
               : "text-white/60 hover:text-white after:w-0 after:opacity-0"
