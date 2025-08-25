@@ -8,7 +8,6 @@ import { allTokens } from "@/lib/tokens";
 import { formatUnits } from "viem";
 import Big from "big.js";
 import { useMarketData } from "@/context/MarketDataProvider";
-import { formatTokenDisplayCondensed } from "@/lib/format";
 import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { TRADE_EXECUTE_ABI } from "@/lib/abis/tradeExecuteAbi";
@@ -230,7 +229,7 @@ const CloseCell = ({
       queryClient.invalidateQueries({ queryKey: ["positions"] });
       queryClient.invalidateQueries({ queryKey: ["closed-positions"] });
     }
-  }, [executedTradeData]);
+  }, [executedTradeData, queryClient]);
 
   useEffect(() => {
     if (error) {
@@ -288,9 +287,10 @@ const CloseCell = ({
               },
             ],
           });
-        } catch (e: any) {
+        } catch (e: unknown) {
+          const errorMessage = e instanceof Error ? e.message : "Unknown error occurred";
           toast.error("Position Close Failed", {
-            description: e?.message ?? "Please try again later.",
+            description: errorMessage,
           });
         }
       }}

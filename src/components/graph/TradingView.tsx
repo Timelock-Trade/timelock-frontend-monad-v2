@@ -25,15 +25,16 @@ export const TradingView = memo(() => {
   const SCALE = getScale();
   const compensatingPercent = `${(1 / SCALE) * 100}%`;
 
-  // Responsive font size for chart labels
-  const getFontSize = () => {
-    if (isMobile) return 9; // Smaller font for mobile
-    if (isTablet) return 10; // Medium font for tablets
-    return 11; // Default font for desktop
-  };
-
   useEffect(() => {
     if (!window || !chartContainerRef.current) return;
+    
+    // Responsive font size for chart labels - moved inside useEffect
+    const getFontSize = () => {
+      if (isMobile) return 9; // Smaller font for mobile
+      if (isTablet) return 10; // Medium font for tablets
+      return 11; // Default font for desktop
+    };
+    
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: selectedTokenPair[0].symbol,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -97,7 +98,7 @@ export const TradingView = memo(() => {
     return () => {
       tvWidget.remove();
     };
-  }, [selectedTokenPair, isMobile, isTablet, SCALE, getFontSize]);
+  }, [selectedTokenPair, isMobile, isTablet, SCALE]);
 
   return (
     <div className="h-full w-full overflow-hidden">

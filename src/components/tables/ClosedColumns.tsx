@@ -5,7 +5,6 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Token } from "@/lib/tokens";
 import { formatUnits } from "viem";
-import { formatTokenDisplayCondensed } from "@/lib/format";
 
 const columnHelper = createColumnHelper<ClosedPosition>();
 
