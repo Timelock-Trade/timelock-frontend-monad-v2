@@ -124,6 +124,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
     functionName: "previewTrade",
     args,
     query: {
+      refetchInterval: 5000,
       enabled: isMax
         ? true
         : !!amount && Big(amount).gt(0) && !isBalanceLoading,
