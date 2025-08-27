@@ -57,9 +57,8 @@ const columns = [
               </span>
             </div>
             <span
-              className={`text-[10px] uppercase font-semibold opacity-50 ${
-                info.getValue() ? "text-[#19DE92]" : "text-[#EC5058]"
-              }`}
+              className={`text-[10px] uppercase font-semibold opacity-50 ${info.getValue() ? "text-[#19DE92]" : "text-[#EC5058]"
+                }`}
             >
               {info.getValue() ? "Long" : "Short"}
             </span>
@@ -134,9 +133,8 @@ const columns = [
           <span className="whitespace-nowrap">{`${hoursRemaining}h ${minutesRemaining}m`}</span>
           <div className="w-[100px] md:w-[130px] h-[8px] md:h-[10px] bg-[#1A1A1A] rounded-md relative overflow-hidden">
             <div
-              className={`absolute top-0 left-0 h-full rounded-md ${
-                !info.row.original.isCall ? "bg-[#EC5058]" : "bg-[#19DE92]"
-              }`}
+              className={`absolute top-0 left-0 h-full rounded-md ${!info.row.original.isCall ? "bg-[#EC5058]" : "bg-[#19DE92]"
+                }`}
               style={{ width: `${elapsedPercentage}%` }}
             ></div>
           </div>
@@ -174,10 +172,10 @@ const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
   const rawPnl = isCall
     ? Big(formatUnits(BigInt(value), putAsset.decimals))
     : primePoolPriceData?.currentPrice
-    ? Big(formatUnits(BigInt(value), callAsset.decimals)).mul(
+      ? Big(formatUnits(BigInt(value), callAsset.decimals)).mul(
         Big(primePoolPriceData.currentPrice)
       )
-    : null;
+      : null;
 
   const pnl = rawPnl ? truncateDecimals(rawPnl.toString(), 2) : null;
 
@@ -190,7 +188,7 @@ const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
     if (rawPnl && paid.gt(0)) {
       percent = truncateDecimals(rawPnl.div(paid).minus(1).mul(100).toString(), 1);
     }
-  } catch {}
+  } catch { }
 
   return (
     <div className="flex flex-row items-center gap-1 text-[11px] md:text-[13px]">
@@ -256,56 +254,25 @@ const CloseCell = ({
 
   return (
     <button
-      disabled={
-        isPending ||
-        disabled ||
-        !optionId ||
-        !swapper ||
-        !swapData ||
-        !liquidityToExercise ||
-        swapper.length === 0 ||
-        swapData.length === 0 ||
-        liquidityToExercise.length === 0
-      }
+      disabled={isPending}
       onClick={() => {
         if (disabled) {
           toast.error("Position cannot be closed right now. PnL < 0");
           return;
         }
-        if (
-          !optionId ||
-          !swapper ||
-          !swapData ||
-          !liquidityToExercise ||
-          swapper.length === 0 ||
-          swapData.length === 0 ||
-          liquidityToExercise.length === 0
-        ) {
-          toast.error("Position data unavailable", {
-            description: "Required close parameters are missing.",
-          });
-          return;
-        }
-        try {
-          writeContract({
-            address: optionMarketAddress as `0x${string}`,
-            abi: TRADE_EXECUTE_ABI,
-            functionName: "exerciseOption",
-            args: [
-              {
-                optionId: BigInt(optionId),
-                swapper,
-                swapData: swapData as Hex[],
-                liquidityToExercise: liquidityToExercise.map((v) => BigInt(v)),
-              },
-            ],
-          });
-        } catch (e: unknown) {
-          const errorMessage = e instanceof Error ? e.message : "Unknown error occurred";
-          toast.error("Position Close Failed", {
-            description: errorMessage,
-          });
-        }
+        writeContract({
+          address: optionMarketAddress as `0x${string}`,
+          abi: TRADE_EXECUTE_ABI,
+          functionName: "exerciseOption",
+          args: [
+            {
+              optionId,
+              swapper,
+              swapData,
+              liquidityToExercise,
+            },
+          ],
+        });
       }}
       className={cn(
         "text-[#EC5058] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer text-xs md:text-sm px-2 py-1 whitespace-nowrap"
@@ -324,9 +291,9 @@ const CurrentPriceCell = () => {
     <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
       {primePoolPriceData?.currentPrice
         ? truncateDecimals(
-            Big(primePoolPriceData?.currentPrice).toString(),
-            2
-          )
+          Big(primePoolPriceData?.currentPrice).toString(),
+          2
+        )
         : "--"}{" "}
       {selectedTokenPair[1].symbol}
     </span>

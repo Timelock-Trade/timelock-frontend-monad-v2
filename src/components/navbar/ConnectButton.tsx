@@ -32,11 +32,11 @@ const ConnectButton = () => {
   });
 
   return (
-    <div className="flex flex-row items-center bg-[#131313] rounded-[14px] overflow-hidden">
+    <div className="flex flex-row items-center bg-[#131313] rounded-[14px] overflow-hidden flex-shrink-0">
       {isConnected && isMounted && !isMobile && (
-        <div className="w-fit flex h-full px-3 pl-5 text-sm">
+        <div className="w-fit flex h-full px-2 pl-3 text-xs whitespace-nowrap">
           {isLoading ? (
-            <div className="h-4 w-16 animate-pulse rounded bg-gray-700" />
+            <div className="h-4 w-12 animate-pulse rounded bg-gray-700" />
           ) : (
             `${
               balanceData
@@ -55,11 +55,11 @@ const ConnectButton = () => {
             <button
               onClick={show}
               className={cn(
-                "h-[42px] whitespace-nowrap rounded-[14px] bg-white text-[#0D0D0D] font-semibold text-[15px] cursor-pointer",
+                "h-[42px] whitespace-nowrap rounded-[14px] bg-white text-[#0D0D0D] font-semibold cursor-pointer flex-shrink-0",
                 "transition-all duration-200",
                 isMobile 
-                  ? "px-3 min-w-[80px]" 
-                  : "px-4 min-w-[120px]",
+                  ? "px-2 min-w-[70px] text-sm" 
+                  : "px-4 min-w-[120px] text-[15px]",
                 isConnected && "text-[#D1D5DA] font-bold bg-white/[0.06]"
               )}
             >

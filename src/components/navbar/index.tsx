@@ -164,9 +164,9 @@ export default function Navbar() {
         {/* Right: Actions */}
         <div
           className={cn(
-            "flex flex-row items-center ml-auto",
+            "flex flex-row items-center ml-auto flex-nowrap",
             isMobile 
-              ? "gap-1 max-w-[calc(100vw-180px)]" 
+              ? "gap-1 max-w-[calc(100vw-120px)] overflow-hidden" 
               : "gap-2 md:w-[520px] md:justify-end"
           )}
         >

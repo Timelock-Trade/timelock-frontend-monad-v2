@@ -52,7 +52,7 @@ export function useClosedPositionsData() {
   return useQuery({
     queryKey: ["closed-positions", address, chainId],
     queryFn: async () => {
-      if (!address || !chainId) return { positions: [] } as { positions: ClosedPosition[] };
+      // if (!address || !chainId) return { positions: [] } as { positions: ClosedPosition[] };
 
       const response = await fetch(
         `${apiUrl}/expired-options?address=${address}&chainId=${chainId}`,
@@ -86,7 +86,7 @@ export function useClosedPositionsData() {
 
       return { positions };
     },
-    enabled: !!address && !!chainId,
+    enabled: true,
     refetchInterval: 10000,
   });
 }
