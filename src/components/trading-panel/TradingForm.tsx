@@ -46,7 +46,7 @@ interface TradePreviewResult {
 }
 
 export default function TradingForm({ isLong }: { isLong: boolean }) {
-  const { isPending, data: hash, writeContract, error } = useWriteContract();
+  const { isPending, data: hash, writeContractAsync, error } = useWriteContract();
   const [isOpenCreatePositionDialog, setIsOpenCreatePositionDialog] =
     useState(false);
   const [isMax, setIsMax] = useState(false);
@@ -191,7 +191,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
 
   const durations = filteredTtlIV.map((item) => formatDuration(item.ttl));
 
-  const { data: approvalHash, writeContract: writeApproval } =
+  const { data: approvalHash, writeContractAsync: writeApproval } =
     useWriteContract();
 
   const { error: approvalError } = useWaitForTransactionReceipt({
@@ -244,14 +244,14 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
     )
       return;
 
-    if (Big(allowance.toString()).lt(totalCost.toString())) {
+    // if (Big(allowance.toString()).lt(totalCost.toString())) {
       await writeApproval({
         address: selectedTokenPair[1].address as `0x${string}`,
         abi: erc20Abi,
         functionName: "approve",
         args: [optionMarketAddress as `0x${string}`, totalCost as bigint],
       });
-    }
+    // }
 
     const optionTicks = {
       _handler: LIQUIDITY_HANDLER_ADDRESS_USDC,
@@ -262,7 +262,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
       liquidityToUse: tradeData.steps[0].liquidity,
     };
 
-    writeContract({
+    await writeContractAsync({
       address: optionMarketAddress as `0x${string}`,
       abi: TRADE_EXECUTE_ABI,
       functionName: "mintOption",
