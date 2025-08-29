@@ -15,7 +15,6 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 import { truncateDecimals } from "@/lib/format";
 import { useQueryClient } from "@tanstack/react-query";
-import type { Hex } from "viem";
 
 const columnHelper = createColumnHelper<Position>();
 
