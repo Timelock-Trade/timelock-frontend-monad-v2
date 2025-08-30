@@ -244,14 +244,14 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
     )
       return;
 
-    // if (Big(allowance.toString()).lt(totalCost.toString())) {
+    if (Big(allowance.toString()).lt(totalCost.toString())) {
       await writeApproval({
         address: selectedTokenPair[1].address as `0x${string}`,
         abi: erc20Abi,
         functionName: "approve",
         args: [optionMarketAddress as `0x${string}`, totalCost as bigint],
       });
-    // }
+    }
 
     const optionTicks = {
       _handler: LIQUIDITY_HANDLER_ADDRESS_USDC,
