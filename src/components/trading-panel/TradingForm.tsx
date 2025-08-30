@@ -1,5 +1,5 @@
 import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
-import Input from "@/components/trading-panel/Input";
+import {AmountInput} from "@/components/trading-panel/AmountInput";
 import { FlashIcon } from "@/icons";
 import DurationSelector from "./DurationSelector";
 import TradeExecutionDetails from "./TradeExecutionDetails";
@@ -327,7 +327,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
                   : undefined,
             }}
           >
-            {(field) => <Input setIsMax={setIsMax} field={field} />}
+            {(field) => <AmountInput setIsMax={setIsMax} field={field} />}
           </form.Field>
         </div>
         {hasEnteredAmount && (

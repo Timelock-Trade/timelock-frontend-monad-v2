@@ -13,7 +13,7 @@ import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { TRADE_EXECUTE_ABI } from "@/lib/abis/tradeExecuteAbi";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { truncateDecimals } from "@/lib/format";
+import { formatCondensed } from "@/lib/format";
 import { useQueryClient } from "@tanstack/react-query";
 
 const columnHelper = createColumnHelper<Position>();
@@ -77,7 +77,7 @@ const columns = [
 
       return (
         <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
-          {amount ? truncateDecimals(amount, 2) : "0.00"} {token.symbol}
+          {amount ? formatCondensed(amount) : "0.00"} {token.symbol}
         </span>
       );
     },
@@ -104,7 +104,7 @@ const columns = [
       return (
         <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
           {value
-            ? truncateDecimals(formatUnits(BigInt(value), decimals), 2)
+            ? formatCondensed(formatUnits(BigInt(value), decimals))
             : "--"}{" "}
           {symbol}
         </span>
@@ -176,7 +176,7 @@ const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
       )
       : null;
 
-  const pnl = rawPnl ? truncateDecimals(rawPnl.toString(), 2) : null;
+  const pnl = rawPnl ? formatCondensed(rawPnl.toString()) : null;
 
   // Percent change relative to amount paid if available
   let percent: string | null = null;
@@ -185,7 +185,7 @@ const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
       formatUnits(BigInt(info.row.original.paid), putAsset.decimals)
     );
     if (rawPnl && paid.gt(0)) {
-      percent = truncateDecimals(rawPnl.div(paid).minus(1).mul(100).toString(), 1);
+      percent = formatCondensed(rawPnl.div(paid).minus(1).mul(100).toString());
     }
   } catch { }
 
@@ -289,9 +289,8 @@ const CurrentPriceCell = () => {
   return (
     <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
       {primePoolPriceData?.currentPrice
-        ? truncateDecimals(
-          Big(primePoolPriceData?.currentPrice).toString(),
-          2
+        ? formatCondensed(
+          Big(primePoolPriceData?.currentPrice).toString()
         )
         : "--"}{" "}
       {selectedTokenPair[1].symbol}

@@ -6,7 +6,7 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
-import { truncateDecimals } from "@/lib/format";
+import { formatCondensed } from "@/lib/format";
 import { Token } from "@/lib/tokens";
 import { cn } from "@/lib/utils";
 import { XIcon } from "lucide-react";
@@ -52,16 +52,13 @@ export function CreatePositionDialog({
         <div className="grid gap-[6px] py-2">
           <Stats
             title="Position Size"
-            value={(positionSize ? truncateDecimals(positionSize, 2) : positionSize) + " " + callAsset.symbol}
+            value={positionSize + " " + callAsset.symbol}
           />
           <Stats
             title="Premium"
             value={
               premiumCost
-                ? truncateDecimals(
-                    formatUnits(premiumCost, putAsset.decimals),
-                    2
-                  ) +
+                ? formatCondensed(formatUnits(premiumCost, putAsset.decimals)) +
                   " " +
                   putAsset.symbol
                 : "--"
@@ -71,10 +68,7 @@ export function CreatePositionDialog({
             title="You Pay"
             value={
               youPay
-                ? truncateDecimals(
-                    formatUnits(youPay, putAsset.decimals),
-                    2
-                  ) +
+                ? formatCondensed(formatUnits(youPay, putAsset.decimals)) +
                   " " +
                   putAsset.symbol
                 : "--"

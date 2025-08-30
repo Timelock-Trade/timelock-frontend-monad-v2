@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { formatTokenDisplayCondensed } from "@/lib/format";
+import { formatCondensed } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 import { formatUnits } from "viem";
@@ -61,10 +61,7 @@ const TradeExecutionDetailsItem = ({
       <span className="text-[#9CA3AF] text-sm transition-colors duration-300 ease-in-out group-hover:text-white">{title}</span>
       <span className="text-white text-sm font-medium transition-all duration-300 ease-in-out">
         {value
-          ? formatTokenDisplayCondensed(
-            formatUnits(value, selectedTokenPair[1].decimals),
-            selectedTokenPair[1].decimals
-          )
+          ? formatCondensed(formatUnits(value, selectedTokenPair[1].decimals))
           : "--"}{" "}
         {selectedTokenPair[1].symbol}
       </span>

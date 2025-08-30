@@ -7,8 +7,9 @@ import Big from "big.js";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { formatUSD } from "@/lib/format";
 
-const Input = ({
+export const AmountInput = ({
   field,
   setIsMax,
 }: {
@@ -57,11 +58,10 @@ const Input = ({
         />
         <div className="text-[#9CA3AF] text-xs font-medium whitespace-nowrap truncate">
           {primePoolPriceData?.currentPrice && field.state.value
-            ? Big(primePoolPriceData?.currentPrice)
+            ? formatUSD(Big(primePoolPriceData?.currentPrice)
                 .mul(Big(field.state.value))
-                .toString()
+                .toString())
             : "--"}{" "}
-          {selectedTokenPair[1].symbol}
         </div>
       </div>
       <div className="flex flex-row gap-2 items-start shrink-0">
@@ -87,5 +87,3 @@ const Input = ({
     </div>
   );
 };
-
-export default Input;

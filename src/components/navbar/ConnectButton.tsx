@@ -7,7 +7,7 @@ import { ArrowDownIcon } from "@/icons";
 import { useAccount, useBalance } from "wagmi";
 import { USDC } from "@/lib/tokens";
 import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
-import { formatTokenDisplayCondensed } from "@/lib/format";
+import { formatCondensed } from "@/lib/format";
 import { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
@@ -40,10 +40,7 @@ const ConnectButton = () => {
           ) : (
             `${
               balanceData
-                ? formatTokenDisplayCondensed(
-                    balanceData.formatted,
-                    selectedTokenPair[1].decimals
-                  )
+                ? formatCondensed(balanceData.formatted)
                 : "--"
             } ${selectedTokenPair[1].symbol}`
           )}
