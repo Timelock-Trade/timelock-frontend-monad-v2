@@ -191,7 +191,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
 
   const durations = filteredTtlIV.map((item) => formatDuration(item.ttl));
 
-  const { data: approvalHash, writeContractAsync: writeApproval } =
+  const { data: approvalHash, writeContractAsync: writeApproval, isPending: isApprovalPending } =
     useWriteContract();
 
   const { error: approvalError } = useWaitForTransactionReceipt({
@@ -390,7 +390,8 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
                     isSubmitting ||
                     isLoading ||
                     isError ||
-                    isPending
+                    isPending ||
+                    isApprovalPending
                   }
                 >
                   {!isConnected
