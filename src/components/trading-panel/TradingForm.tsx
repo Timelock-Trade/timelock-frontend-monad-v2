@@ -84,7 +84,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
       ? Big(amount).mul(Big(primePoolPriceData.currentPrice))
       : null;
   const scaledAmountInPutAsset = amountInPutAsset
-    ? parseUnits(amountInPutAsset.toString(), selectedTokenPair[1].decimals)
+    ? parseUnits(amountInPutAsset.toFixed(), selectedTokenPair[1].decimals)
     : null;
 
   const { data: balanceData, isLoading: isBalanceLoading } = useBalance({
@@ -330,14 +330,14 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
             {(field) => <AmountInput setIsMax={setIsMax} field={field} />}
           </form.Field>
         </div>
-        {hasEnteredAmount && (
-          <div className={`flex mt-2 mb-6 flex-row gap-1 items-center border border-[#282324] rounded-[8px] w-fit ${isMobile ? 'px-2 py-1' : 'px-2 py-1'}`}>
-            <FlashIcon />
-            <span className={`${isMobile ? 'text-sm' : 'text-sm'} font-medium text-[#1981F3] bg-[#1a1a1a80]`}>
-              {leverageValue ? leverageValue + "x Leverage" : "--"}
-            </span>
-          </div>
-        )}
+        
+        <div className={`flex mt-2 mb-6 flex-row gap-1 items-center border border-[#282324] rounded-[8px] w-fit ${isMobile ? 'px-2 py-1' : 'px-2 py-1'}`}>
+          <FlashIcon />
+          <span className={`${isMobile ? 'text-sm' : 'text-sm'} font-medium text-[#1981F3] bg-[#1a1a1a80]`}>
+            {leverageValue ? leverageValue + "x Leverage" : "--"}
+          </span>
+        </div>
+        
         <div className="text-sm font-medium pb-3">For</div>
         {/* <BlueStrokeIcon className="absolute bottom-[96px] -left-[20px]" /> */}
         <DurationSelector
@@ -346,12 +346,10 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
           setSelectedDurationIndex={setSelectedDurationIndex}
         />
         <div className="mt-6">
-          <div className={`${!hasEnteredAmount ? 'invisible' : ''}`}>
-            <TradeExecutionDetails
-              premiumCost={premiumCost}
-              protocolFee={protocolFee}
-            />
-          </div>
+          <TradeExecutionDetails
+            premiumCost={premiumCost}
+            protocolFee={protocolFee}
+          />
         </div>
         <div className={`mt-5 mb-3 text-sm font-medium text-white ${!hasEnteredAmount ? 'invisible' : ''}`}>
           <span className="inline-flex items-center gap-2">
