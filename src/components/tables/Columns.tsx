@@ -185,7 +185,7 @@ const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
       formatUnits(BigInt(info.row.original.paid), putAsset.decimals)
     );
     if (rawPnl && paid.gt(0)) {
-      percent = formatCondensed(rawPnl.div(paid).minus(1).mul(100).toString());
+      percent = formatCondensed(rawPnl.div(paid).mul(100).toString());
     }
   } catch { }
 
