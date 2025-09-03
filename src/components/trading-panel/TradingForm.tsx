@@ -142,7 +142,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
 
   useEffect(() => {
     if (isError) {
-      toast.error("Failed to fetch liquidity data", {
+      toast.error("Not enough liquidity in the pool", {
         description: "Please try again later.",
       });
     }
