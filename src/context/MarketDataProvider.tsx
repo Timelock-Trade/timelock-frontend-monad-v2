@@ -32,7 +32,7 @@ const MarketDataContext = createContext<MarketData | null>(null);
 
 export function MarketDataProvider({
   children,
-  ttlIV,
+  // ttlIV,
   optionMarketAddress,
   primePool,
   primePoolPriceData,
@@ -43,6 +43,13 @@ export function MarketDataProvider({
     (price) => price.poolAddress === primePool
   );
 
+  const ttlIV: IVDataPoint[] = [
+    { ttl: 60 * 1, IV: "100" },
+    { ttl: 60 * 15, IV: "100" },
+    { ttl: 60 * 60, IV: "100" },
+    { ttl: 60 * 60 * 24, IV: "100" },
+    { ttl: 60 * 60 * 24 * 2, IV: "100" },
+  ];
   return (
     <MarketDataContext.Provider
       value={{
