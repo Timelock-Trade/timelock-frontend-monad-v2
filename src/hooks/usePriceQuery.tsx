@@ -6,6 +6,5 @@ export function usePriceQuery() {
     queryKey: ["prices"],
     queryFn: getPriceData,
     refetchInterval: 5000,
-    retry: false,
   });
 }

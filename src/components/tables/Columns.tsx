@@ -8,7 +8,6 @@ import { allTokens } from "@/lib/tokens";
 import { formatUnits } from "viem";
 import Big from "big.js";
 import { useMarketData } from "@/context/MarketDataProvider";
-import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { TRADE_EXECUTE_ABI } from "@/lib/abis/tradeExecuteAbi";
 import { useEffect } from "react";
@@ -288,14 +287,14 @@ const CloseCell = ({
 
 const CurrentPriceCell = () => {
   const { primePoolPriceData } = useMarketData();
-  const { selectedTokenPair } = useSelectedTokenPair();
+  const { tokens } = useMarketData();
 
   return (
     <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
       {primePoolPriceData?.currentPrice
         ? formatCondensed(Big(primePoolPriceData?.currentPrice).toString())
         : "--"}{" "}
-      {selectedTokenPair[1].symbol}
+      {tokens[1].symbol}
     </span>
   );
 };

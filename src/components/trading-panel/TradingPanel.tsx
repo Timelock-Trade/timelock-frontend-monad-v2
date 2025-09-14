@@ -29,9 +29,9 @@ export default function TradingPanel() {
 
   return (
     <div
-      className={`${isMobile ? "border border-[#1A1A1A] rounded-md p-4 w-full" : "w-full max-w-[400px] border-l border-[#1A1A1A] px-6"}`}
+      className={`${isMobile ? "border border-[#1A1A1A] rounded-md p-4 w-full" : "w-full max-w-[400px] border-l border-[#1A1A1A] px-5"}`}
     >      
-      <div className="flex flex-row my-5 px-2 gap-2 justify-center align-middle w-full">
+      <div className="flex flex-row mt-6 mb-4 px-2 gap-2 justify-center align-middle w-full">
         <div className="flex-1 text-sm text-[#9CA3AF]">
           Your Balance: {usdcBalance ? formatCondensed(usdcBalance.formatted) : '--'} USDC
         </div>
@@ -51,7 +51,7 @@ export default function TradingPanel() {
           </Popover>
         </div>
       </div>
-      <div className="flex-1 mt-5 mb-10 ">
+      <div className="flex-1 mb-6">
         <Tabs
           value={tabValue}
           onValueChange={(value) => setTabValue(value as TabValue)}

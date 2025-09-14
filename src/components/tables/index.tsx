@@ -12,14 +12,17 @@ import columns from "./Columns";
 import createClosedColumns from "./ClosedColumns";
 import { useAccount } from "wagmi";
 import { ErrorIcon } from "@/icons";
-import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
+import { useMarketData } from "@/context/MarketDataProvider";
 
 export default function Tables() {
   const { data: positions, isLoading, error } = usePositionsTableData();
   const { isConnected } = useAccount();
-  const { data: closed, isLoading: isClosedLoading, error: closedError } =
-    useClosedPositionsData();
-  const { selectedTokenPair } = useSelectedTokenPair();
+  const {
+    data: closed,
+    isLoading: isClosedLoading,
+    error: closedError,
+  } = useClosedPositionsData();
+  const { tokens } = useMarketData();
   const [isMounted, setIsMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"open" | "closed">("open");
 
@@ -29,15 +32,15 @@ export default function Tables() {
   }, []);
 
   const positionsData = positions?.positions?.sort(
-    (a, b) => b.createdAt - a.createdAt
+    (a, b) => b.createdAt - a.createdAt,
   );
 
-  const closedData = useMemo(() => closed?.positions ?? [], [closed?.positions]);
-
-  const closedCols = useMemo(
-    () => createClosedColumns(selectedTokenPair),
-    [selectedTokenPair]
+  const closedData = useMemo(
+    () => closed?.positions ?? [],
+    [closed?.positions],
   );
+
+  const closedCols = useMemo(() => createClosedColumns(tokens), [tokens]);
 
   const table = useReactTable({
     data: useMemo(() => {
@@ -112,7 +115,7 @@ export default function Tables() {
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </th>
                 ))}
@@ -126,9 +129,12 @@ export default function Tables() {
                 className="border-b border-[#1A1A1A] bg-[#0D0D0D] hover:bg-[#1A1A1A]/50 transition-colors"
               >
                 {row.getVisibleCells().map((cell, index) => (
-                  <td key={cell.id} className={`font-semibold text-xs md:text-sm ${
-                    index === 0 ? "" : "px-2 md:px-4"
-                  }`}>
+                  <td
+                    key={cell.id}
+                    className={`font-semibold text-xs md:text-sm ${
+                      index === 0 ? "" : "px-2 md:px-4"
+                    }`}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -198,7 +204,7 @@ export default function Tables() {
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </th>
                 ))}
@@ -212,9 +218,12 @@ export default function Tables() {
                 className="border-b border-[#1A1A1A] bg-[#0D0D0D] hover:bg-[#1A1A1A]/50 transition-colors"
               >
                 {row.getVisibleCells().map((cell, index) => (
-                  <td key={cell.id} className={`font-semibold text-xs md:text-sm ${
-                    index === 0 ? "" : "px-2 md:px-4"
-                  }`}>
+                  <td
+                    key={cell.id}
+                    className={`font-semibold text-xs md:text-sm ${
+                      index === 0 ? "" : "px-2 md:px-4"
+                    }`}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}

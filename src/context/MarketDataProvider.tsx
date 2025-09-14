@@ -8,8 +8,9 @@ import {
   SetStateAction,
   Dispatch,
 } from "react";
-import { IVDataPoint, PriceData } from "@/lib/api";
+import { PriceData } from "@/lib/api";
 import { usePriceQuery } from "@/hooks/usePriceQuery";
+import { IVDataPoint, markets, Token } from "@/lib/tokens";
 
 interface MarketData {
   ttlIV: IVDataPoint[];
@@ -18,47 +19,36 @@ interface MarketData {
   primePoolPriceData: PriceData | undefined;
   selectedDurationIndex: number;
   setSelectedDurationIndex: Dispatch<SetStateAction<number>>;
+  tokens: Token[];
 }
 
 interface MarketDataProviderProps {
   children: ReactNode;
-  ttlIV: MarketData["ttlIV"];
-  optionMarketAddress: MarketData["optionMarketAddress"];
-  primePool: MarketData["primePool"];
-  primePoolPriceData: MarketData["primePoolPriceData"];
 }
 
 const MarketDataContext = createContext<MarketData | null>(null);
 
-export function MarketDataProvider({
-  children,
-  // ttlIV,
-  optionMarketAddress,
-  primePool,
-  primePoolPriceData,
-}: MarketDataProviderProps) {
+export function MarketDataProvider({ children }: MarketDataProviderProps) {
+  const market = "wmon-usdc";
+  const { optionMarketAddress, primePool, ttlIV, tokens } = markets[market];
+
   const [selectedDurationIndex, setSelectedDurationIndex] = useState(1);
   const { data: priceData } = usePriceQuery();
-  const updatedPrimePoolPriceData = priceData?.find(
-    (price) => price.poolAddress === primePool
+
+  const primePoolPriceData = priceData?.find(
+    (price) => price.poolAddress === primePool,
   );
 
-  const ttlIV: IVDataPoint[] = [
-    { ttl: 60 * 1, IV: "100" },
-    { ttl: 60 * 15, IV: "100" },
-    { ttl: 60 * 60, IV: "100" },
-    { ttl: 60 * 60 * 24, IV: "100" },
-    { ttl: 60 * 60 * 24 * 2, IV: "100" },
-  ];
   return (
     <MarketDataContext.Provider
       value={{
         ttlIV,
         optionMarketAddress,
         primePool,
-        primePoolPriceData: updatedPrimePoolPriceData ?? primePoolPriceData,
+        primePoolPriceData,
         selectedDurationIndex,
         setSelectedDurationIndex,
+        tokens,
       }}
     >
       {children}
@@ -69,7 +59,7 @@ export function MarketDataProvider({
 export function useMarketData() {
   const context = useContext(MarketDataContext);
   if (!context) {
-    throw new Error("useIVData must be used within an IVDataProvider");
+  throw new Error("useIVData must be used within an IVDataProvider");
   }
   return context;
 }

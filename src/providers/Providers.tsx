@@ -6,7 +6,6 @@ import { WagmiProvider, createConfig, http } from "wagmi";
 import { Toaster } from "sonner";
 import { monad } from "@/lib/chains";
 import { RPC_URL } from "@/lib/rpcs";
-import { SelectedTokenPairProvider } from "./SelectedTokenPairProvider";
 import { ErrorIcon, SuccessIcon } from "@/icons";
 
 const config = createConfig(
@@ -54,7 +53,7 @@ export const Provider: React.FC<{ children: React.ReactNode }> = ({
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
           <ConnectKitProvider theme="midnight">
-            <SelectedTokenPairProvider>{children}</SelectedTokenPairProvider>
+            {children}
           </ConnectKitProvider>
         </QueryClientProvider>
       </WagmiProvider>

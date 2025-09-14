@@ -6,23 +6,10 @@ import Tables from "@/components/tables";
 import TradingPanel from "@/components/trading-panel/TradingPanel";
 import Graph from "@/components/graph";
 import { MarketDataProvider } from "@/context/MarketDataProvider";
-import { IVDataPoint, PriceData } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
-interface HomeClientProps {
-  ttlIV: IVDataPoint[];
-  optionMarketAddress: string;
-  primePool: string;
-  primePoolPriceData: PriceData | undefined;
-}
-
-export default function HomeClient({
-  ttlIV,
-  optionMarketAddress,
-  primePool,
-  primePoolPriceData,
-}: HomeClientProps) {
+export default function HomeClient() {
   const [hasMounted, setHasMounted] = useState(false);
   const isMobile = useIsMobile(768);
   
@@ -31,14 +18,8 @@ export default function HomeClient({
   if (!hasMounted) {
     return <div className="min-h-screen w-full bg-[#0D0D0D]" />;
   }
-
   return (
-    <MarketDataProvider
-      ttlIV={ttlIV}
-      optionMarketAddress={optionMarketAddress}
-      primePool={primePool}
-      primePoolPriceData={primePoolPriceData}
-    >
+    <MarketDataProvider>
       <main style={{ fontFamily: "var(--font-ibm)" }}>
         <Navbar />
         <div className="max-w-[1440px] mx-auto border-t border-t-[#1A1A1A]">

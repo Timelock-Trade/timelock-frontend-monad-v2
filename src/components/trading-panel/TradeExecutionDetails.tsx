@@ -1,7 +1,7 @@
 // import { FlashIcon } from "@/icons";
+import { useMarketData } from "@/context/MarketDataProvider";
 import { formatCondensed } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 import { formatUnits } from "viem";
 
 export default function TradeExecutionDetails({
@@ -13,7 +13,7 @@ export default function TradeExecutionDetails({
   premiumCost?: bigint;
   protocolFee?: bigint;
 }) {
-  const { selectedTokenPair } = useSelectedTokenPair();
+  const { tokens } = useMarketData();
 
   return (
     <>
@@ -31,20 +31,20 @@ export default function TradeExecutionDetails({
         className="pt-3 pb-[10px]"
       >
         {premiumCost
-          ? formatCondensed(formatUnits(premiumCost, selectedTokenPair[1].decimals))
+          ? formatCondensed(formatUnits(premiumCost, tokens[1].decimals))
           : "--"}{" "}
-        {selectedTokenPair[1].symbol}
+        {tokens[1].symbol}
       </TradeExecutionDetailsItem>
       <TradeExecutionDetailsItem
         title="Protocol Fees"
         className="pt-3 pb-[10px]"
       >
         {protocolFee
-          ? formatCondensed(formatUnits(protocolFee, selectedTokenPair[1].decimals))
+          ? formatCondensed(formatUnits(protocolFee, tokens[1].decimals))
           : "--"}{" "}
-        {selectedTokenPair[1].symbol}
+        {tokens[1].symbol}
       </TradeExecutionDetailsItem>
-      <div className="w-full mt-5 h-[1px] bg-[#282324] transition-all duration-300 ease-in-out transform hover:bg-opacity-50"></div>
+      <div className="w-full mt-4 h-[1px] bg-[#282324] transition-all duration-300 ease-in-out transform hover:bg-opacity-50"></div>
     </>
   );
 }

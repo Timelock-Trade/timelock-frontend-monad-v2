@@ -1,4 +1,3 @@
-import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 import {AmountInput} from "@/components/trading-panel/AmountInput";
 import { FlashIcon } from "@/icons";
 import DurationSelector from "./DurationSelector";
@@ -50,7 +49,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
   const [isOpenCreatePositionDialog, setIsOpenCreatePositionDialog] =
     useState(false);
   const [isMax, setIsMax] = useState(false);
-  const { selectedTokenPair } = useSelectedTokenPair();
+  const { tokens } = useMarketData();
   const { skipOrderConfirmation } = useSettingsStore();
   const { address, isConnected, chainId } = useAccount();
   const { setOpen } = useModal();
@@ -78,13 +77,13 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
   });
 
   const amount = useStore(form.store, (state) => state.values.amount);
-  const scaledAmount = parseUnits(amount, selectedTokenPair[0].decimals);
+  const scaledAmount = parseUnits(amount, tokens[0].decimals);
   const amountInPutAsset =
     primePoolPriceData?.currentPrice && amount
       ? Big(amount).mul(Big(primePoolPriceData.currentPrice))
       : null;
   const scaledAmountInPutAsset = amountInPutAsset
-    ? parseUnits(amountInPutAsset.toFixed(), selectedTokenPair[1].decimals)
+    ? parseUnits(amountInPutAsset.toFixed(), tokens[1].decimals)
     : null;
 
   const { data: balanceData, isLoading: isBalanceLoading } = useBalance({
@@ -152,17 +151,17 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
     if (!isLoading && !isError && amountFromPreview && isMax) {
       form.setFieldValue(
         "amount",
-        formatUnits(amountFromPreview, selectedTokenPair[0].decimals)
+        formatUnits(amountFromPreview, tokens[0].decimals)
       );
     }
-  }, [amountFromPreview, form, isError, isLoading, isMax, selectedTokenPair]);
+  }, [amountFromPreview, form, isError, isLoading, isMax, tokens]);
 
   const calculateLeverage = () => {
     if (!tradeData?.steps || !totalCost || !primePoolPriceData) return null;
 
     const totalAmount = formatUnits(
       tradeData.steps[0].amount,
-      isLong ? selectedTokenPair[0].decimals : selectedTokenPair[1].decimals
+      isLong ? tokens[0].decimals : tokens[1].decimals
     );
 
     const costInUSDC = isLong
@@ -171,17 +170,14 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
 
     const totalCostInUSDC = formatUnits(
       totalCost,
-      selectedTokenPair[1].decimals
+      tokens[1].decimals
     );
 
     const leverage = costInUSDC.div(totalCostInUSDC);
 
     return leverage.toFixed(2);
   };
-
   const leverageValue = calculateLeverage();
-
-  const hasEnteredAmount = !!amount && Big(amount).gt(0);
 
   const formatDuration = (ttl: number) => {
     if (ttl < 3600) return `${Math.floor(ttl / 60)}m`;
@@ -227,7 +223,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
   }, [tradeError]);
 
   const { data: allowance } = useReadContract({
-    address: selectedTokenPair[1].address as `0x${string}`,
+    address: tokens[1].address as `0x${string}`,
     abi: erc20Abi,
     functionName: "allowance",
     args: [address as `0x${string}`, optionMarketAddress as `0x${string}`],
@@ -246,7 +242,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
 
     if (Big(allowance.toString()).lt(totalCost.toString())) {
       await writeApproval({
-        address: selectedTokenPair[1].address as `0x${string}`,
+        address: tokens[1].address as `0x${string}`,
         abi: erc20Abi,
         functionName: "approve",
         args: [optionMarketAddress as `0x${string}`, totalCost as bigint],
@@ -331,7 +327,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
           </form.Field>
         </div>
         
-        <div className={`flex mt-2 mb-6 flex-row gap-1 items-center border border-[#282324] rounded-[8px] w-fit ${isMobile ? 'px-2 py-1' : 'px-2 py-1'}`}>
+        <div className={`flex mt-2 mb-4 flex-row gap-1 items-center border border-[#282324] rounded-[8px] w-fit ${isMobile ? 'px-2 py-1' : 'px-2 py-1'}`}>
           <FlashIcon />
           <span className={`${isMobile ? 'text-sm' : 'text-sm'} font-medium text-[#1981F3] bg-[#1a1a1a80]`}>
             {leverageValue ? leverageValue + "x Leverage" : "--"}
@@ -345,20 +341,20 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
           selectedDurationIndex={safeSelectedDurationIndex}
           setSelectedDurationIndex={setSelectedDurationIndex}
         />
-        <div className="mt-6">
+        <div className="mt-4">
           <TradeExecutionDetails
             premiumCost={premiumCost}
             protocolFee={protocolFee}
           />
         </div>
-        <div className={`mt-5 mb-3 text-sm font-medium text-white ${!hasEnteredAmount ? 'invisible' : ''}`}>
+        <div className={`mt-4 mb-3 text-sm font-medium text-white`}>
           <span className="inline-flex items-center gap-2">
             <span>You Pay</span>
             <span>
               {totalCost
-                ? formatUnits(totalCost, selectedTokenPair[1].decimals)
+                ? formatUnits(totalCost, tokens[1].decimals)
                 : "--"}{" "}
-              {selectedTokenPair[1].symbol}
+              {tokens[1].symbol}
             </span>
             <button
               type="button"
@@ -395,8 +391,8 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
                   {!isConnected
                     ? "Connect Wallet"
                     : isLong
-                    ? "Long " + selectedTokenPair[0].symbol
-                    : "Short " + selectedTokenPair[0].symbol}
+                    ? "Long " + tokens[0].symbol
+                    : "Short " + tokens[0].symbol}
                 </button>
                 <CreatePositionDialog
                   positionSize={amount}
@@ -404,8 +400,8 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
                   youPay={totalCost}
                   premiumCost={premiumCost}
                   duration={formatDuration(filteredTtlIV[safeSelectedDurationIndex]?.ttl)}
-                  callAsset={selectedTokenPair[0]}
-                  putAsset={selectedTokenPair[1]}
+                  callAsset={tokens[0]}
+                  putAsset={tokens[1]}
                   isLong={isLong}
                   isOpen={isOpenCreatePositionDialog}
                   setIsOpen={setIsOpenCreatePositionDialog}
@@ -423,7 +419,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
                   setIsOpen={setIsYouPayInfoOpen}
                   totalCost={totalCost}
                   leverage={leverageValue}
-                  putAsset={selectedTokenPair[1]}
+                  putAsset={tokens[1]}
                   amount={amount}
                   currentPrice={primePoolPriceData?.currentPrice?.toString() || null}
                   isLong={isLong}
@@ -432,10 +428,6 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
             );
           }}
         </form.Subscribe>
-        <div className={`text-xs pt-3 ${isMobile ? 'max-w-full' : 'max-w-sm'} mx-auto text-center text-[#9CA3AF]`}>
-          The premium you pay on timelock is used to protect your trade from
-          liquidations even if the asset price goes to 0.
-        </div>
       </form>
     </>
   );
