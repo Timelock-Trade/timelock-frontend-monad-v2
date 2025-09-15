@@ -29,7 +29,7 @@ interface MarketDataProviderProps {
 const MarketDataContext = createContext<MarketData | null>(null);
 
 export function MarketDataProvider({ children }: MarketDataProviderProps) {
-  const market = "wmon-usdc";
+  const market = "weth-usdc";
   const { optionMarketAddress, primePool, ttlIV, tokens } = markets[market];
 
   const [selectedDurationIndex, setSelectedDurationIndex] = useState(1);
@@ -60,6 +60,6 @@ export function useMarketData() {
   const context = useContext(MarketDataContext);
   if (!context) {
   throw new Error("useIVData must be used within an IVDataProvider");
-  }
+}
   return context;
 }
