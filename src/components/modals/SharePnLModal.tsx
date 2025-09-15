@@ -77,17 +77,114 @@ export default function SharePnLModal({
     if (!cardRef.current) return;
 
     try {
-      // Dynamic import to avoid SSR issues
-      const html2canvas = (await import("html2canvas")).default;
+      // Custom canvas implementation - most reliable approach
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
 
-      const canvas = await html2canvas(cardRef.current, {
-        backgroundColor: null,
-        scale: 2,
-      });
+      // Set canvas size for high DPI
+      const scale = 2;
+      const width = 500;
+      const height = 280; // 16:9 aspect ratio approximately
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      ctx.scale(scale, scale);
 
+      // Draw gradient background
+      const gradient = ctx.createLinearGradient(0, 0, width, height);
+
+      // Parse the gradient from selectedBg
+      if (selectedBg.id === 1) {
+        gradient.addColorStop(0, "#667eea");
+        gradient.addColorStop(1, "#764ba2");
+      } else if (selectedBg.id === 2) {
+        gradient.addColorStop(0, "#f093fb");
+        gradient.addColorStop(1, "#f5576c");
+      } else if (selectedBg.id === 3) {
+        gradient.addColorStop(0, "#4facfe");
+        gradient.addColorStop(1, "#00f2fe");
+      } else if (selectedBg.id === 4) {
+        gradient.addColorStop(0, "#43e97b");
+        gradient.addColorStop(1, "#38f9d7");
+      } else if (selectedBg.id === 5) {
+        gradient.addColorStop(0, "#fa709a");
+        gradient.addColorStop(1, "#fee140");
+      } else if (selectedBg.id === 6) {
+        gradient.addColorStop(0, "#30cfd0");
+        gradient.addColorStop(1, "#330867");
+      } else if (selectedBg.id === 7) {
+        gradient.addColorStop(0, "#a8edea");
+        gradient.addColorStop(1, "#fed6e3");
+      } else if (selectedBg.id === 8) {
+        gradient.addColorStop(0, "#ff9a9e");
+        gradient.addColorStop(1, "#fecfef");
+      }
+
+      ctx.fillStyle = gradient;
+
+      // Draw rounded rectangle
+      ctx.beginPath();
+      ctx.roundRect(0, 0, width, height, 12);
+      ctx.fill();
+
+      // Draw "Timelock Options" text
+      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.font =
+        "14px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+      ctx.fillText("Timelock Options", 24, 40);
+
+      // Draw main PnL text
+      ctx.fillStyle = isProfitable ? "#ffffff" : "rgba(255, 255, 255, 0.7)";
+      ctx.font =
+        "bold 32px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+      const pnlText = `${isProfitable ? "+" : ""}${pnl} ${putAsset.symbol}`;
+      ctx.fillText(pnlText, 24, 85);
+
+      // Draw percentage if profitable
+      if (percentChange && isProfitable) {
+        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+        ctx.font =
+          "18px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+        ctx.fillText(`+${percentChange}%`, 24, 115);
+      }
+
+      // Draw LONG/SHORT badge
+      const badgeText = position.isCall ? "LONG" : "SHORT";
+      const badgeWidth = ctx.measureText(badgeText).width + 24;
+      const badgeX = width - badgeWidth - 24;
+      const badgeY = 24;
+
+      // Badge background
+      ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+      ctx.beginPath();
+      ctx.roundRect(badgeX, badgeY, badgeWidth, 28, 14);
+      ctx.fill();
+
+      // Badge text
+      ctx.fillStyle = "#ffffff";
+      ctx.font =
+        "14px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+      ctx.fillText(badgeText, badgeX + 12, badgeY + 18);
+
+      // Draw asset info at bottom
+      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.font =
+        "16px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+      ctx.fillText(callAsset.symbol, 24, height - 40);
+
+      ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+      ctx.font =
+        "14px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+      const sizeText = `Size: ${formatCondensed(
+        formatUnits(BigInt(position.amount), callAsset.decimals),
+      )} ${callAsset.symbol}`;
+      ctx.fillText(sizeText, 24, height - 18);
+
+      // Convert to data URL and download
+      const dataUrl = canvas.toDataURL("image/png");
       const link = document.createElement("a");
       link.download = `timelock-pnl-${Date.now()}.png`;
-      link.href = canvas.toDataURL();
+      link.href = dataUrl;
       link.click();
     } catch (error) {
       console.error("Error downloading image:", error);
@@ -118,29 +215,48 @@ export default function SharePnLModal({
             <div
               ref={cardRef}
               className="relative w-full aspect-[16/9] rounded-xl overflow-hidden p-6 flex flex-col justify-between"
-              style={{ background: selectedBg.gradient }}
+              style={{
+                background: selectedBg.gradient,
+                color: "#ffffff",
+                fontFamily: "system-ui, -apple-system, sans-serif",
+              }}
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="text-white/90 text-sm font-medium mb-1">
+                  <div
+                    className="text-sm font-medium mb-1"
+                    style={{ color: "rgba(255, 255, 255, 0.9)" }}
+                  >
                     Timelock Options
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`text-3xl font-bold text-white ${!isProfitable ? "opacity-70" : ""}`}
+                      className="text-3xl font-bold"
+                      style={{
+                        color: "#ffffff",
+                        opacity: !isProfitable ? 0.7 : 1,
+                      }}
                     >
                       {isProfitable ? "+" : ""}
                       {pnl} {putAsset.symbol}
                     </span>
                   </div>
                   {percentChange && isProfitable && (
-                    <div className="text-white/80 text-lg mt-1">
+                    <div
+                      className="text-lg mt-1"
+                      style={{ color: "rgba(255, 255, 255, 0.8)" }}
+                    >
                       +{percentChange}%
                     </div>
                   )}
                 </div>
                 <div
-                  className={`px-3 py-1 rounded-full bg-white/20 backdrop-blur text-white text-sm font-medium`}
+                  className="px-3 py-1 rounded-full text-sm font-medium"
+                  style={{
+                    backgroundColor: "rgba(255, 255, 255, 0.2)",
+                    backdropFilter: "blur(10px)",
+                    color: "#ffffff",
+                  }}
                 >
                   {position.isCall ? "LONG" : "SHORT"}
                 </div>
@@ -153,11 +269,17 @@ export default function SharePnLModal({
                     alt={callAsset.symbol}
                     className="w-6 h-6 rounded-full"
                   />
-                  <span className="text-white/90 font-medium">
+                  <span
+                    className="font-medium"
+                    style={{ color: "rgba(255, 255, 255, 0.9)" }}
+                  >
                     {callAsset.symbol}
                   </span>
                 </div>
-                <div className="text-white/70 text-sm">
+                <div
+                  className="text-sm"
+                  style={{ color: "rgba(255, 255, 255, 0.7)" }}
+                >
                   Size:{" "}
                   {formatCondensed(
                     formatUnits(BigInt(position.amount), callAsset.decimals),
