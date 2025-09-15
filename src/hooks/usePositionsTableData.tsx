@@ -1,4 +1,3 @@
-import { useMarketData } from "@/context/MarketDataProvider";
 import { useQuery } from "@tanstack/react-query";
 import { useAccount, useChainId } from "wagmi";
 
