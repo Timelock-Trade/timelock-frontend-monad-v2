@@ -10,10 +10,12 @@ import Big from "big.js";
 import { useMarketData } from "@/context/MarketDataProvider";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { TRADE_EXECUTE_ABI } from "@/lib/abis/tradeExecuteAbi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { formatCondensed } from "@/lib/format";
 import { useQueryClient } from "@tanstack/react-query";
+import { Share2 } from "lucide-react";
+import SharePnLModal from "@/components/modals/SharePnLModal";
 
 const columnHelper = createColumnHelper<Position>();
 
@@ -159,6 +161,7 @@ const columns = [
 
 const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
   const { primePoolPriceData } = useMarketData();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const value = info.getValue();
   const isCall = info.row.original.isCall;
   const putAsset =
@@ -188,28 +191,39 @@ const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
   } catch {}
 
   return (
-    <div className="flex flex-row items-center gap-1 text-[11px] md:text-[13px]">
-      {Big(value).lte(0) ? (
-        <div className="flex flex-row items-center gap-1 md:gap-2">
-          <span className="line-through text-white/[0.5] whitespace-nowrap">
-            {pnl ?? "--"}{" "}
+    <>
+      <div className="flex flex-row items-center gap-1 text-[11px] md:text-[13px]">
+        {Big(value).lte(0) ? (
+          <div className="flex flex-row items-center gap-1 md:gap-2">
+            <span className="line-through text-white/[0.5] whitespace-nowrap">
+              {pnl ?? "--"}{" "}
+            </span>
+            <span className="whitespace-nowrap">0 USDC</span>
+          </div>
+        ) : (
+          <span className="text-[#19DE92] whitespace-nowrap">
+            {pnl}{" "}
+            {
+              allTokens[
+                info.row.original.putAsset.toLowerCase() as `0x${string}`
+              ].symbol
+            }
+            {percent ? ` (${percent}%)` : ""}
           </span>
-          <span className="whitespace-nowrap">0 USDC</span>
-          <span className="underline text-white/[0.5] underline-offset-2 cursor-pointer hidden md:inline">
-            How?
-          </span>
-        </div>
-      ) : (
-        <span className="text-[#19DE92] whitespace-nowrap">
-          {pnl}{" "}
-          {
-            allTokens[info.row.original.putAsset.toLowerCase() as `0x${string}`]
-              .symbol
-          }
-          {percent ? ` (${percent}%)` : ""}
-        </span>
-      )}
-    </div>
+        )}
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="ml-1 text-white/50 hover:text-white transition-colors"
+        >
+          <Share2 className="w-3 h-3 md:w-4 md:h-4" />
+        </button>
+      </div>
+      <SharePnLModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        position={info.row.original}
+      />
+    </>
   );
 };
 
