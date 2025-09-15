@@ -8,6 +8,7 @@ import Graph from "@/components/graph";
 import { MarketDataProvider } from "@/context/MarketDataProvider";
 import { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import PoolSelectionBar from "@/components/PoolSelectionBar";
 
 export default function HomeClient() {
   const [hasMounted, setHasMounted] = useState(false);
@@ -35,6 +36,10 @@ export default function HomeClient() {
                   <Graph />
                 </div>
               </div>
+              {/* Pool Selection under chart */}
+              <div className="px-6">
+                <PoolSelectionBar />
+              </div>
               
               {/* Trading Panel Section */}
               <div className="mt-4">
@@ -56,6 +61,7 @@ export default function HomeClient() {
                     <Graph />
                   </div>
                 </div>
+                <PoolSelectionBar />
                 <div className="mb-20">
                   <Tables />
                 </div>

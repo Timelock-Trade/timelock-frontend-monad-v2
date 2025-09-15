@@ -20,6 +20,8 @@ interface MarketData {
   selectedDurationIndex: number;
   setSelectedDurationIndex: Dispatch<SetStateAction<number>>;
   tokens: Token[];
+  selectedMarket: string;
+  setSelectedMarket: Dispatch<SetStateAction<string>>;
 }
 
 interface MarketDataProviderProps {
@@ -29,8 +31,9 @@ interface MarketDataProviderProps {
 const MarketDataContext = createContext<MarketData | null>(null);
 
 export function MarketDataProvider({ children }: MarketDataProviderProps) {
-  const market = "weth-usdc";
-  const { optionMarketAddress, primePool, ttlIV, tokens } = markets[market];
+  const [selectedMarket, setSelectedMarket] = useState("weth-usdc");
+  const { optionMarketAddress, primePool, ttlIV, tokens } =
+    markets[selectedMarket];
 
   const [selectedDurationIndex, setSelectedDurationIndex] = useState(1);
   const { data: priceData } = usePriceQuery();
@@ -49,6 +52,8 @@ export function MarketDataProvider({ children }: MarketDataProviderProps) {
         selectedDurationIndex,
         setSelectedDurationIndex,
         tokens,
+        selectedMarket,
+        setSelectedMarket,
       }}
     >
       {children}
