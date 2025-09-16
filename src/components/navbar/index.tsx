@@ -122,7 +122,7 @@ export default function Navbar() {
 
   return (
     <div className="w-full bg-[#0D0D0D]">
-      <nav className="flex items-center w-full mx-auto max-w-[1440px] py-[14px] px-[24px] md:px-[40px]">
+      <nav className="flex items-center w-full mx-auto max-w-[1440px] py-[14px] px-[24px]">
         {/* Left: Logo + Links */}
         <div className="flex items-center gap-[28px]">
           {/* TODO: Replace with text if we can */}

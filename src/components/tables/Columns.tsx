@@ -8,16 +8,16 @@ import { allTokens } from "@/lib/tokens";
 import { formatUnits } from "viem";
 import Big from "big.js";
 import { useMarketData } from "@/context/MarketDataProvider";
-import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { TRADE_EXECUTE_ABI } from "@/lib/abis/tradeExecuteAbi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { formatCondensed } from "@/lib/format";
 import { useQueryClient } from "@tanstack/react-query";
+import { Share2 } from "lucide-react";
+import SharePnLModal from "@/components/modals/SharePnLModal";
 
 const columnHelper = createColumnHelper<Position>();
-
 
 const columns = [
   columnHelper.accessor("isCall", {
@@ -27,7 +27,7 @@ const columns = [
         <div
           className={cn(
             "flex items-center flex-row gap-1 md:gap-2 border px-2 md:px-[12px] py-1 md:py-[6px] rounded-md w-fit border-[#1A1A1A]",
-            info.getValue() ? "text-[#16C784]" : "text-[#EC5058]"
+            info.getValue() ? "text-[#16C784]" : "text-[#EC5058]",
           )}
         >
           {info.getValue() ? <LongIcon /> : <ShortIcon />}
@@ -56,8 +56,9 @@ const columns = [
               </span>
             </div>
             <span
-              className={`text-[10px] uppercase font-semibold opacity-50 ${info.getValue() ? "text-[#19DE92]" : "text-[#EC5058]"
-                }`}
+              className={`text-[10px] uppercase font-semibold opacity-50 ${
+                info.getValue() ? "text-[#19DE92]" : "text-[#EC5058]"
+              }`}
             >
               {info.getValue() ? "Long" : "Short"}
             </span>
@@ -103,9 +104,7 @@ const columns = [
           .symbol;
       return (
         <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
-          {value
-            ? formatCondensed(formatUnits(BigInt(value), decimals))
-            : "--"}{" "}
+          {value ? formatCondensed(formatUnits(BigInt(value), decimals)) : "--"}{" "}
           {symbol}
         </span>
       );
@@ -121,7 +120,7 @@ const columns = [
 
       const elapsedPercentage = Math.max(
         0,
-        Math.min(100, 100 - (remaining / totalDuration) * 100)
+        Math.min(100, 100 - (remaining / totalDuration) * 100),
       );
 
       const hoursRemaining = Math.floor(remaining / 3600);
@@ -132,8 +131,9 @@ const columns = [
           <span className="whitespace-nowrap">{`${hoursRemaining}h ${minutesRemaining}m`}</span>
           <div className="w-[100px] md:w-[130px] h-[8px] md:h-[10px] bg-[#1A1A1A] rounded-md relative overflow-hidden">
             <div
-              className={`absolute top-0 left-0 h-full rounded-md ${!info.row.original.isCall ? "bg-[#EC5058]" : "bg-[#19DE92]"
-                }`}
+              className={`absolute top-0 left-0 h-full rounded-md ${
+                !info.row.original.isCall ? "bg-[#EC5058]" : "bg-[#19DE92]"
+              }`}
               style={{ width: `${elapsedPercentage}%` }}
             ></div>
           </div>
@@ -161,6 +161,7 @@ const columns = [
 
 const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
   const { primePoolPriceData } = useMarketData();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const value = info.getValue();
   const isCall = info.row.original.isCall;
   const putAsset =
@@ -172,8 +173,8 @@ const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
     ? Big(formatUnits(BigInt(value), putAsset.decimals))
     : primePoolPriceData?.currentPrice
       ? Big(formatUnits(BigInt(value), callAsset.decimals)).mul(
-        Big(primePoolPriceData.currentPrice)
-      )
+          Big(primePoolPriceData.currentPrice),
+        )
       : null;
 
   const pnl = rawPnl ? formatCondensed(rawPnl.toString()) : null;
@@ -182,34 +183,47 @@ const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
   let percent: string | null = null;
   try {
     const paid = Big(
-      formatUnits(BigInt(info.row.original.paid), putAsset.decimals)
+      formatUnits(BigInt(info.row.original.paid), putAsset.decimals),
     );
     if (rawPnl && paid.gt(0)) {
       percent = formatCondensed(rawPnl.div(paid).mul(100).toString());
     }
-  } catch { }
+  } catch {}
 
   return (
-    <div className="flex flex-row items-center gap-1 text-[11px] md:text-[13px]">
-      {Big(value).lte(0) ? (
-        <div className="flex flex-row items-center gap-1 md:gap-2">
-          <span className="line-through text-white/[0.5] whitespace-nowrap">{pnl ?? "--"} </span>
-          <span className="whitespace-nowrap">0 USDC</span>
-          <span className="underline text-white/[0.5] underline-offset-2 cursor-pointer hidden md:inline">
-            How?
+    <>
+      <div className="flex flex-row items-center gap-1 text-[11px] md:text-[13px]">
+        {Big(value).lte(0) ? (
+          <div className="flex flex-row items-center gap-1 md:gap-2">
+            <span className="line-through text-white/[0.5] whitespace-nowrap">
+              {pnl ?? "--"}{" "}
+            </span>
+            <span className="whitespace-nowrap">0 USDC</span>
+          </div>
+        ) : (
+          <span className="text-[#19DE92] whitespace-nowrap">
+            {pnl}{" "}
+            {
+              allTokens[
+                info.row.original.putAsset.toLowerCase() as `0x${string}`
+              ].symbol
+            }
+            {percent ? ` (${percent}%)` : ""}
           </span>
-        </div>
-      ) : (
-        <span className="text-[#19DE92] whitespace-nowrap">
-          {pnl}{" "}
-          {
-            allTokens[info.row.original.putAsset.toLowerCase() as `0x${string}`]
-              .symbol
-          }
-          {percent ? ` (${percent}%)` : ""}
-        </span>
-      )}
-    </div>
+        )}
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="ml-1 text-white/50 hover:text-white transition-colors"
+        >
+          <Share2 className="w-3 h-3 md:w-4 md:h-4" />
+        </button>
+      </div>
+      <SharePnLModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        position={info.row.original}
+      />
+    </>
   );
 };
 
@@ -274,7 +288,10 @@ const CloseCell = ({
         });
       }}
       className={cn(
-        "text-[#EC5058] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer text-xs md:text-sm px-2 py-1 whitespace-nowrap"
+        "text-[#EC5058] transition-colors text-xs md:text-sm px-2 py-1 whitespace-nowrap",
+        isPending || disabled
+          ? "opacity-50 cursor-not-allowed"
+          : "cursor-pointer",
       )}
     >
       Close
@@ -284,16 +301,14 @@ const CloseCell = ({
 
 const CurrentPriceCell = () => {
   const { primePoolPriceData } = useMarketData();
-  const { selectedTokenPair } = useSelectedTokenPair();
+  const { tokens } = useMarketData();
 
   return (
     <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
       {primePoolPriceData?.currentPrice
-        ? formatCondensed(
-          Big(primePoolPriceData?.currentPrice).toString()
-        )
+        ? formatCondensed(Big(primePoolPriceData?.currentPrice).toString())
         : "--"}{" "}
-      {selectedTokenPair[1].symbol}
+      {tokens[1].symbol}
     </span>
   );
 };

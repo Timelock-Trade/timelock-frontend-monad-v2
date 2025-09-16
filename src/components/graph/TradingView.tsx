@@ -1,6 +1,5 @@
 "use client";
 import { memo, useEffect, useRef } from "react";
-import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 import {
@@ -8,10 +7,12 @@ import {
   ResolutionString,
   widget,
 } from "../../../public/static/charting_library";
+import { useMarketData } from "@/context/MarketDataProvider";
+import { CustomDatafeed } from "./CustomDatafeed";
 
 export const TradingView = memo(() => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
-  const { selectedTokenPair } = useSelectedTokenPair();
+  const { tokens, primePool } = useMarketData();
   const isMobile = useIsMobile(768);
   const isTablet = useIsMobile(1024);
 
@@ -27,24 +28,18 @@ export const TradingView = memo(() => {
 
   useEffect(() => {
     if (!window || !chartContainerRef.current) return;
-    
+
     // Responsive font size for chart labels - moved inside useEffect
     const getFontSize = () => {
       if (isMobile) return 9; // Smaller font for mobile
       if (isTablet) return 10; // Medium font for tablets
       return 11; // Default font for desktop
     };
-    
+
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: selectedTokenPair[0].symbol,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(
-        "/api",
-        undefined,
-        {
-          expectedOrder: "latestLast",
-        }
-      ),
+      symbol: tokens[0].symbol,
+      // Use custom datafeed with primePool
+      datafeed: new CustomDatafeed("/api", primePool),
       interval: "15" as ResolutionString,
       container: chartContainerRef.current,
       library_path: "/static/charting_library/",
@@ -98,7 +93,7 @@ export const TradingView = memo(() => {
     return () => {
       tvWidget.remove();
     };
-  }, [selectedTokenPair, isMobile, isTablet, SCALE]);
+  }, [tokens, primePool, isMobile, isTablet, SCALE]);
 
   return (
     <div className="h-full w-full overflow-hidden">

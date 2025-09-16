@@ -6,13 +6,13 @@ import { cn } from "@/lib/utils";
 import { ArrowDownIcon } from "@/icons";
 import { useAccount, useBalance } from "wagmi";
 import { USDC } from "@/lib/tokens";
-import { useSelectedTokenPair } from "@/providers/SelectedTokenPairProvider";
 import { formatCondensed } from "@/lib/format";
 import { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useMarketData } from "@/context/MarketDataProvider";
 
 const ConnectButton = () => {
-  const { selectedTokenPair } = useSelectedTokenPair();
+  const { tokens } = useMarketData();
   const { isConnected, address } = useAccount();
   const [isMounted, setIsMounted] = useState(false);
   const isMobile = useIsMobile();
@@ -42,7 +42,7 @@ const ConnectButton = () => {
               balanceData
                 ? formatCondensed(balanceData.formatted)
                 : "--"
-            } ${selectedTokenPair[1].symbol}`
+            } ${tokens[1].symbol}`
           )}
         </div>
       )}

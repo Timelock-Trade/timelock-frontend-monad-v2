@@ -52,22 +52,22 @@ export function useClosedPositionsData() {
   return useQuery({
     queryKey: ["closed-positions", address, chainId],
     queryFn: async () => {
-      // if (!address || !chainId) return { positions: [] } as { positions: ClosedPosition[] };
+      if (!address || !chainId)
+        return { positions: [] } as { positions: ClosedPosition[] };
 
       const response = await fetch(
-        `${apiUrl}/expired-options?address=${address}&chainId=${chainId}`,
+        `${apiUrl}/closed-options?address=${address}&chainId=${chainId}`,
         {
           headers: {
             "Content-Type": "application/json",
           },
           cache: "no-store",
-        }
+        },
       );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = (await response.json()) as { options: ClosedPositionRaw[] };
 
       // Map minimal fields required for display in a closed positions table
@@ -90,5 +90,3 @@ export function useClosedPositionsData() {
     refetchInterval: 10000,
   });
 }
-
-

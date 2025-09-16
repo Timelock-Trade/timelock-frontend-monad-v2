@@ -1,7 +1,6 @@
 // import Big from "big.js";
 import { NextResponse } from "next/server";
 
-const POOL_ADDRESS = process.env.NEXT_PUBLIC_POOL_ADDRESS;
 const TIMEFRAME_MAP = {
   1: "1m",
   5: "1m",
@@ -15,11 +14,13 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const from = searchParams.get("from");
     const to = searchParams.get("to");
+    const primePool = searchParams.get("primePool");
 
-    if (!from || !to) {
-      return new Response(`Pass from and to parameters`, { status: 400 });
+    if (!from || !to || !primePool) {
+      return new Response(`Pass from, to, and primePool parameters`, {
+        status: 400,
+      });
     }
-
     const resolution = searchParams.get("resolution");
     const symbol = searchParams.get("symbol");
 
@@ -30,45 +31,40 @@ export async function GET(request: Request) {
         status: 400,
       });
     }
-
     if (!timeframe) {
       return NextResponse.json(
-        {
-          error: "Missing required parameters: timeframe",
-        },
-        { status: 400 }
+        { error: "Missing required parameters: timeframe" },
+        { status: 400 },
       );
     }
-
     const validTimeframes = ["1m", "1h", "1d"];
+
     if (!validTimeframes.includes(timeframe)) {
       return NextResponse.json(
         { error: "Invalid timeframe. Must be one of: day, hour, minute" },
-        { status: 400 }
+        { status: 400 },
       );
     }
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_OHLC_BACKEND}/ohlc/${POOL_ADDRESS}?from=${from}&to=${to}&interval=${timeframe}`,
-      {
-        headers: {
-          accept: "application/json",
-        },
-      }
+    console.log(
+      `${process.env.NEXT_PUBLIC_OHLC_BACKEND}/ohlc/${primePool}?from=${from}&to=${to}&interval=${timeframe}`,
     );
-
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_OHLC_BACKEND}/ohlc/${primePool}?from=${from}&to=${to}&interval=${timeframe}`,
+      {
+        headers: { accept: "application/json" },
+      },
+    );
     if (!response.ok) {
       const error = await response.text();
-      return NextResponse.json({error}, { status: response.status });
+      return NextResponse.json({ error }, { status: response.status });
     }
-
     const data = (await response.json()).data;
 
     let status = "ok";
+
     if (data.length === 0) {
       status = "no_data";
     }
-
     const t = [];
     const o = [];
     const h = [];
@@ -100,7 +96,7 @@ export async function GET(request: Request) {
     console.error("Error fetching data:", error);
     return NextResponse.json(
       { error: error || "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

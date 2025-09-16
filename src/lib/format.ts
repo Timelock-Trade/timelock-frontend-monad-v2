@@ -1,15 +1,15 @@
-import { BigNumber } from "bignumber.js";
+export const formatBasic = (input: string | number): string => {
+  const str = input.toString(10);
+  const [whole, decimal] = str.split(".");
 
-type BigNumberish = BigNumber.Value;
+  const formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-export const toBigNumber = (input: BigNumberish): BigNumber => {
-  if (BigNumber.isBigNumber(input)) {
-    return input;
-  }
-  return new BigNumber(input);
+  if (!decimal) return formattedWhole;
+
+  return `${formattedWhole}.${decimal}`;
 };
 
-export const formatCondensed = (input: string | number): string => {
+export const formatCondensed = (input: string | number, decimals = 2): string => {
   const str = input.toString(10);
   const [whole, decimal] = str.split(".");
 
@@ -24,7 +24,7 @@ export const formatCondensed = (input: string | number): string => {
     const subscript = toSubscript(zeroCount.toString());
     const remaining = decimal.slice(zeroCount);
 
-    const twoDigits = remaining.slice(0, 2);
+    const twoDigits = remaining.slice(0, decimals);
     return `${formattedWhole}.0${subscript}${twoDigits}`;
   } else {
     // No subscript needed, find first 2 significant digits
@@ -34,7 +34,7 @@ export const formatCondensed = (input: string | number): string => {
       return formattedWhole; // All zeros
     }
     const significantPart = decimal.slice(nonZeroStart);
-    const twoDigits = significantPart.slice(0, 2);
+    const twoDigits = significantPart.slice(0, decimals);
     const leadingZeros = decimal.slice(0, nonZeroStart);
 
     return `${formattedWhole}.${leadingZeros}${twoDigits}`;
