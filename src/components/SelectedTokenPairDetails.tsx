@@ -2,6 +2,7 @@
 import Image from "next/image";
 import NumberFlow from "@number-flow/react";
 import { ChevronDown } from "@/icons";
+import PercentChange from "./PercentChange";
 
 import { useMarketData } from "@/context/MarketDataProvider";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -10,6 +11,8 @@ export default function SelectedTokenPairDetails() {
   const { primePoolPriceData, tokens } = useMarketData();
   const isMobile = useIsMobile(768);
 
+  console.log("pow", primePoolPriceData);
+
   return (
     <div
       className={`flex ${isMobile ? "flex-col gap-4" : "flex-row justify-between items-start"} py-4`}
@@ -17,28 +20,26 @@ export default function SelectedTokenPairDetails() {
       <div className="w-full">
         <div className="flex flex-row items-center gap-3 justify-between">
           <div className="flex flex-row gap-4">
-            <div className="px-6 flex flex-row items-center gap-[6px] bg-[#1A1A1A] rounded-lg w-fit">
+            <div className="px-6 flex flex-row items-center gap-[6px] bg-[#1A1A1A] rounded-md">
               <Image
                 src={tokens[0].image}
                 alt={tokens[0].symbol}
                 width={20}
                 height={20}
               />
-              <span className="font-semibold mt-[2px]">
+              <span className="font-semibold">
                 {tokens[0].symbol} / {tokens[1].symbol}
               </span>
             </div>
-            <div className="px-4 pb-2 pt-2  bg-[#1a1a1a80] rounded-md">
+            <div className="px-4 pb-2 pt-2  bg-[#1a1a1a80] rounded-md min-w-[180px]">
               <div className="flex flex-row items-end gap-2 w-full justify-between">
                 <span className="text-[#616E85] text-xs font-medium">
                   Spot Price
                 </span>
-                <div className="text-[#19DE92] text-xs font-semibold flex flex-row items-center">
-                  <ChevronDown className="rotate-180" /> 10%
-                </div>
+                <PercentChange value={primePoolPriceData?.percentChange || 0} />
               </div>
               <div className="flex flex-row items-end gap-4 mt-1">
-                <span className="text-xl">
+                <span className="text-xl flex-1">
                   {primePoolPriceData?.currentPrice ? (
                     <NumberFlow value={primePoolPriceData.currentPrice} />
                   ) : (

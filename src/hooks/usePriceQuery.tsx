@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPriceData, PriceData } from "@/lib/api";
+import { getPriceData } from "@/lib/api";
 
-export function usePriceQuery() {
-  return useQuery<PriceData[]>({
-    queryKey: ["prices"],
-    queryFn: getPriceData,
+export function usePriceQuery(poolAddress?: string) {
+  return useQuery({
+    queryKey: ["prices", poolAddress],
+    queryFn: () => getPriceData(poolAddress!),
+    enabled: !!poolAddress,
     refetchInterval: 5000,
   });
 }

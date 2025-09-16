@@ -36,11 +36,7 @@ export function MarketDataProvider({ children }: MarketDataProviderProps) {
     markets[selectedMarket];
 
   const [selectedDurationIndex, setSelectedDurationIndex] = useState(1);
-  const { data: priceData } = usePriceQuery();
-
-  const primePoolPriceData = priceData?.find(
-    (price) => price.poolAddress === primePool,
-  );
+  const { data: primePoolPriceData } = usePriceQuery(primePool);
 
   return (
     <MarketDataContext.Provider

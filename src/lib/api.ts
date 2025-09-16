@@ -5,25 +5,19 @@ export interface PriceData {
   timestamp: number;
 }
 
-export async function getPriceData(): Promise<PriceData[]> {
+export async function getPriceData(poolAddress: string): Promise<PriceData> {
   const apiUrl = process.env.NEXT_PUBLIC_OHLC_BACKEND;
 
-  try {
-    const response = await fetch(`${apiUrl}/prices`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store",
-    });
+  const response = await fetch(`${apiUrl}/price/${poolAddress.toLowerCase()}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data?.results;
-  } catch (error) {
-    console.error("Error fetching price data:", error);
-    throw error;
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
+  return await response.json();
 }

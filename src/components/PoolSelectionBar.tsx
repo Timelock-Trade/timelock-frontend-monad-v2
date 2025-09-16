@@ -1,11 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { ChevronDown } from "@/icons";
 import { useMarketData } from "@/context/MarketDataProvider";
+import { usePriceQuery } from "@/hooks/usePriceQuery";
+import { markets } from "@/lib/tokens";
+import NumberFlow from "@number-flow/react";
+import PercentChange from "./PercentChange";
+
 
 export default function PoolSelectionBar() {
   const { selectedMarket, setSelectedMarket } = useMarketData();
+  const { data: wethPriceData } = usePriceQuery(markets["weth-usdc"].primePool);
+  const { data: wmonPriceData } = usePriceQuery(markets["wmon-usdc"].primePool);
 
   const isSelected = (market: string) => selectedMarket === market;
 
@@ -28,15 +34,20 @@ export default function PoolSelectionBar() {
         <div className="flex flex-row items-center gap-12">
           <div className="flex flex-row items-center gap-[6px]">
             <Image src="/tokens/wmon.png" alt="WMON" width={14} height={14} />
-            <span className="text-[#9CA3AF] text-sm whitespace-nowrap">WMON / USDC</span>
+            <span className="text-[#9CA3AF] text-sm whitespace-nowrap">
+              WMON / USDC
+            </span>
           </div>
-          <div className="text-[#EC5058] text-xs flex flex-row items-center gap-1">
-            <ChevronDown />
-            8.50%
-          </div>
+          <PercentChange value={wmonPriceData?.percentChange || 0} />
         </div>
         <div className="flex flex-row items-center gap-[6px]">
-          <span className="font-medium">$329.84</span>
+          <span className="font-medium">
+            {wmonPriceData?.currentPrice ? (
+              <NumberFlow value={wmonPriceData.currentPrice} />
+            ) : (
+              "--"
+            )}
+          </span>
           <span className="text-[#9CA3AF] text-xs">USDC</span>
         </div>
       </div>
@@ -49,22 +60,23 @@ export default function PoolSelectionBar() {
         <div className="flex flex-row items-center gap-12">
           <div className="flex flex-row items-center gap-[6px]">
             <Image src="/tokens/weth.png" alt="WETH" width={14} height={14} />
-            <span className="text-[#9CA3AF] text-sm whitespace-nowrap">WETH / USDC</span>
+            <span className="text-[#9CA3AF] text-sm whitespace-nowrap">
+              WETH / USDC
+            </span>
           </div>
-          <div className="text-[#19DE92] text-xs flex flex-row items-center gap-1">
-            <ChevronDown className="rotate-180" />
-            5.10%
-          </div>
+          <PercentChange value={wethPriceData?.percentChange || 0} />
         </div>
         <div className="flex flex-row items-center gap-[6px]">
-          <span className="font-medium">$4,628.80</span>
+          <span className="font-medium">
+            {wethPriceData?.currentPrice ? (
+              <NumberFlow value={wethPriceData.currentPrice} />
+            ) : (
+              "--"
+            )}
+          </span>
           <span className="text-[#9CA3AF] text-xs">USDC</span>
         </div>
       </div>
     </div>
   );
 }
-
-
-
-
