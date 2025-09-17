@@ -70,7 +70,7 @@ export const markets: Record<
     ttlIV: [
       { ttl: 60 * 15, IV: "55" },
       { ttl: 60 * 60, IV: "55" },
-      { ttl: 60 * 60 * 3, IV: "55" },
+      { ttl: 60 * 60 * 4, IV: "55" },
       { ttl: 60 * 60 * 24, IV: "55" },
       { ttl: 60 * 60 * 24 * 2, IV: "55" },
     ],
@@ -82,7 +82,7 @@ export const markets: Record<
     ttlIV: [
       { ttl: 60 * 15, IV: "55" },
       { ttl: 60 * 60, IV: "55" },
-      { ttl: 60 * 60 * 3, IV: "55" },
+      { ttl: 60 * 60 * 4, IV: "55" },
       { ttl: 60 * 60 * 24, IV: "55" },
       { ttl: 60 * 60 * 24 * 2, IV: "55" },
     ],
