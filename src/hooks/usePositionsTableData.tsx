@@ -1,3 +1,4 @@
+import { markets } from "@/lib/tokens";
 import { useQuery } from "@tanstack/react-query";
 import { useAccount, useChainId } from "wagmi";
 
@@ -18,6 +19,7 @@ export interface Position {
   createdAt: number;
   paid: string;
   amount: string;
+  primePool: string;
   liquidityValues: string[];
   exerciseParams: ExerciseParams;
 }
@@ -44,7 +46,16 @@ export function usePositionsTableData() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      return data as { positions: Position[] };
+
+      const positions = (data as { positions: Position[] }).positions.map(
+        (p) => ({
+          ...p,
+          primePool: Object.values(markets).find(
+            (m) => m.optionMarketAddress === p.optionMarket.toLowerCase(),
+          )?.primePool,
+        }),
+      );
+      return { positions };
     },
     enabled: !!address,
     refetchInterval: 5000,

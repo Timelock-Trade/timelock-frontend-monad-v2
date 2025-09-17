@@ -10,8 +10,6 @@ export default function SelectedTokenPairDetails() {
   const { primePoolPriceData, tokens } = useMarketData();
   const isMobile = useIsMobile(768);
 
-  console.log("pow", primePoolPriceData);
-
   return (
     <div
       className={`flex ${isMobile ? "flex-col gap-4" : "flex-row justify-between items-start"} py-4`}

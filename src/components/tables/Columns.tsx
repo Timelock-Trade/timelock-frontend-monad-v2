@@ -162,20 +162,23 @@ const columns = [
 ];
 
 const PnLCell = ({ info }: { info: CellContext<Position, string> }) => {
-  const { primePoolPriceData } = useMarketData();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const value = info.getValue();
   const isCall = info.row.original.isCall;
+
   const putAsset =
     allTokens[info.row.original.putAsset?.toLowerCase() as `0x${string}`];
   const callAsset =
     allTokens[info.row.original.callAsset?.toLowerCase() as `0x${string}`];
 
+  // Use the position's specific primePool instead of global market data
+  const { data: priceData } = usePriceQuery(info.row.original.primePool);
+
   const rawPnl = isCall
     ? Big(formatUnits(BigInt(value), putAsset.decimals))
-    : primePoolPriceData?.currentPrice
+    : priceData?.currentPrice
       ? Big(formatUnits(BigInt(value), callAsset.decimals)).mul(
-          Big(primePoolPriceData.currentPrice),
+          Big(priceData.currentPrice),
         )
       : null;
 
