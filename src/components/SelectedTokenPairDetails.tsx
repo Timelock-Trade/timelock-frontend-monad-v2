@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import NumberFlow from "@number-flow/react";
-import { ChevronDown } from "@/icons";
 import PercentChange from "./PercentChange";
 
 import { useMarketData } from "@/context/MarketDataProvider";
@@ -63,13 +62,13 @@ export default function SelectedTokenPairDetails() {
               <StatsCard
                 title="TVL"
                 value="$120.94M"
-                percentage="10.50%"
+                percentage={10.50}
                 isMobile={isMobile}
               />
               <StatsCard
-                title="Volume(24H)"
+                title="Volume (24H)"
                 value="$13.4M"
-                percentage="8.50%"
+                percentage={8.50}
                 isMobile={isMobile}
               />
             </div>
@@ -84,13 +83,13 @@ export default function SelectedTokenPairDetails() {
         <StatsCard
           title="TVL"
           value="$120.94M"
-          percentage="10.50%"
+          percentage={10.50}
           isMobile={isMobile}
         />
         <StatsCard
-          title="Volume(24H)"
+          title="Volume (24H)"
           value="$13.4M"
-          percentage="8.50%"
+          percentage={8.50}
           isMobile={isMobile}
         />
       </div>
@@ -107,7 +106,7 @@ const StatsCard = ({
 }: {
   title: string;
   value: string;
-  percentage?: string;
+  percentage?: number;
   isMobile?: boolean;
   type?: "primary" | "secondary";
 }) => {
@@ -123,9 +122,7 @@ const StatsCard = ({
           {value}
         </span>
         {percentage && (
-          <div className="text-[#19DE92] text-xs font-semibold flex flex-row items-center">
-            <ChevronDown className="rotate-180" /> {percentage}
-          </div>
+          <PercentChange value={percentage} />
         )}
       </div>
     </div>

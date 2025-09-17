@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAccount, useChainId } from "wagmi";
+import { markets } from "@/lib/tokens";
 
 export interface ClosedPositionInternalOption {
   handler: string;
@@ -72,16 +73,31 @@ export function useClosedPositionsData() {
 
       // Map minimal fields required for display in a closed positions table
       const positions: ClosedPosition[] = data.options
-        .map((o) => ({
-          tokenId: o.tokenId,
-          market: o.market,
-          owner: o.owner,
-          createdAt: o.createdAt,
-          expiry: o.expiry,
-          isCall: o.isCall,
-          strike: o.internalOptions?.[0]?.strike,
-          amount: o.amount,
-        }))
+        .map((o) => {
+          // Find market by option market address
+          const marketEntry = Object.entries(markets).find(
+            ([, marketData]) =>
+              marketData.optionMarketAddress.toLowerCase() ===
+              o.market.toLowerCase(),
+          );
+
+          const tokens = marketEntry?.[1]?.tokens || [];
+          const callAsset = tokens[0]?.address; // First token is typically the call asset
+          const putAsset = tokens[1]?.address; // Second token is typically the put asset (quote)
+
+          return {
+            tokenId: o.tokenId,
+            market: o.market,
+            owner: o.owner,
+            createdAt: o.createdAt,
+            expiry: o.expiry,
+            isCall: o.isCall,
+            callAsset,
+            putAsset,
+            strike: o.internalOptions?.[0]?.strike,
+            amount: o.amount,
+          };
+        })
         .sort((a, b) => b.createdAt - a.createdAt);
 
       return { positions };
