@@ -16,6 +16,8 @@ import { formatCondensed } from "@/lib/format";
 import { useQueryClient } from "@tanstack/react-query";
 import { Share2 } from "lucide-react";
 import SharePnLModal from "@/components/modals/SharePnLModal";
+import { usePriceQuery } from "@/hooks/usePriceQuery";
+import { markets } from "@/lib/tokens";
 
 const columnHelper = createColumnHelper<Position>();
 
@@ -86,7 +88,7 @@ const columns = [
   columnHelper.display({
     id: "currentPrice",
     header: "Current Price",
-    cell: () => <CurrentPriceCell />,
+    cell: (info) => <CurrentPriceCell position={info.row.original} />,
   }),
   columnHelper.accessor("value", {
     header: "PnL",
@@ -299,16 +301,25 @@ const CloseCell = ({
   );
 };
 
-const CurrentPriceCell = () => {
-  const { primePoolPriceData } = useMarketData();
-  const { tokens } = useMarketData();
+const CurrentPriceCell = ({ position }: { position: Position }) => {
+  // Find the market data for this position's option market
+  const marketEntry = Object.entries(markets).find(
+    ([, marketData]) =>
+      marketData.optionMarketAddress.toLowerCase() ===
+      position.optionMarket.toLowerCase(),
+  );
+
+  const primePool = marketEntry?.[1]?.primePool;
+  const tokens = marketEntry?.[1]?.tokens || [];
+
+  const { data: priceData } = usePriceQuery(primePool);
 
   return (
     <span className="text-xs md:text-sm text-white font-semibold whitespace-nowrap">
-      {primePoolPriceData?.currentPrice
-        ? formatCondensed(Big(primePoolPriceData?.currentPrice).toString())
+      {priceData?.currentPrice
+        ? formatCondensed(Big(priceData.currentPrice).toString())
         : "--"}{" "}
-      {tokens[1].symbol}
+      {tokens[1]?.symbol || "USDC"}
     </span>
   );
 };
