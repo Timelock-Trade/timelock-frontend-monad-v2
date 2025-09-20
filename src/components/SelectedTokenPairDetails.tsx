@@ -5,10 +5,13 @@ import PercentChange from "./PercentChange";
 
 import { useMarketData } from "@/context/MarketDataProvider";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useTVL } from "@/hooks/useTVL";
+import { formatTVLFromScaled } from "@/lib/format";
 
 export default function SelectedTokenPairDetails() {
-  const { primePoolPriceData, tokens } = useMarketData();
+  const { primePoolPriceData, tokens, primePool } = useMarketData();
   const isMobile = useIsMobile(768);
+  const { data: tvlData } = useTVL(primePool);
 
   return (
     <div
@@ -59,14 +62,14 @@ export default function SelectedTokenPairDetails() {
             <div className="flex flex-row gap-4">
               <StatsCard
                 title="TVL"
-                value="$120.94M"
-                percentage={10.50}
+                value={tvlData ? formatTVLFromScaled(tvlData.tvl1) : "--"}
+                percentage={10.5}
                 isMobile={isMobile}
               />
               <StatsCard
                 title="Volume (24H)"
                 value="$13.4M"
-                percentage={8.50}
+                percentage={8.5}
                 isMobile={isMobile}
               />
             </div>
@@ -80,14 +83,14 @@ export default function SelectedTokenPairDetails() {
         {/* TODO: Later only send numbers so neg pos can be checked  */}
         <StatsCard
           title="TVL"
-          value="$120.94M"
-          percentage={10.50}
+          value={tvlData ? formatTVLFromScaled(tvlData.tvl1) : "--"}
+          percentage={10.5}
           isMobile={isMobile}
         />
         <StatsCard
           title="Volume (24H)"
           value="$13.4M"
-          percentage={8.50}
+          percentage={8.5}
           isMobile={isMobile}
         />
       </div>
@@ -119,9 +122,7 @@ const StatsCard = ({
         <span className={isMobile ? "text-sm" : "text-sm font-medium"}>
           {value}
         </span>
-        {percentage && (
-          <PercentChange value={percentage} />
-        )}
+        {percentage && <PercentChange value={percentage} />}
       </div>
     </div>
   );

@@ -54,6 +54,12 @@ export async function GET(request: Request) {
         headers: { accept: "application/json" },
       },
     );
+    // const response = await fetch(
+    //   `https://api.geckoterminal.com/api/v2/networks/monad-testnet/pools/${primePool}/ohlcv/${converted[timeframe]!}?before_timestamp=${to}&limit=${limit}`,
+    //   {
+    //     headers: { accept: "application/json" },
+    //   },
+    // );
     if (!response.ok) {
       const error = await response.text();
       return NextResponse.json({ error }, { status: response.status });

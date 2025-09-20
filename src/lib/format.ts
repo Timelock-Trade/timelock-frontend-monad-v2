@@ -2,18 +2,21 @@ export const formatBasic = (input: string | number): string => {
   const str = input.toString(10);
   const [whole, decimal] = str.split(".");
 
-  const formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
   if (!decimal) return formattedWhole;
 
   return `${formattedWhole}.${decimal}`;
 };
 
-export const formatCondensed = (input: string | number, decimals = 2): string => {
+export const formatCondensed = (
+  input: string | number,
+  decimals = 2,
+): string => {
   const str = input.toString(10);
   const [whole, decimal] = str.split(".");
 
-  const formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
   if (!decimal) return formattedWhole;
 
@@ -46,5 +49,11 @@ const toSubscript = (input: string) => {
 };
 
 export const formatUSD = (value: string | number): string => {
-  return '$' + formatCondensed(value);
+  return "$" + formatCondensed(value);
+};
+
+export const formatTVLFromScaled = (scaledValue: string): string => {
+  // USDC is scaled by 6 decimal places, so divide by 10^6
+  const value = parseFloat(scaledValue) / 1e6;
+  return formatUSD(value);
 };
