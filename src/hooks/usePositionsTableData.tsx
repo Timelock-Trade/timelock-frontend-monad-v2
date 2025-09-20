@@ -52,7 +52,7 @@ export function usePositionsTableData() {
           ...p,
           primePool: Object.values(markets).find(
             (m) => m.optionMarketAddress === p.optionMarket.toLowerCase(),
-          )?.primePool,
+          )!.primePool,
         }),
       );
       return { positions };

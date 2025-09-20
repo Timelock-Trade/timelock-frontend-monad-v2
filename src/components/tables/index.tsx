@@ -31,8 +31,9 @@ export default function Tables() {
     setIsMounted(true);
   }, []);
 
-  const positionsData = positions?.positions?.sort(
-    (a, b) => b.createdAt - a.createdAt,
+  const positionsData = useMemo(
+    () => positions?.positions?.sort((a, b) => b.createdAt - a.createdAt) || [],
+    [positions],
   );
 
   const closedData = useMemo(
@@ -43,9 +44,7 @@ export default function Tables() {
   const closedCols = useMemo(() => createClosedColumns(tokens), [tokens]);
 
   const table = useReactTable({
-    data: useMemo(() => {
-      return positionsData ?? [];
-    }, [positionsData]),
+    data: positionsData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
