@@ -15,7 +15,7 @@ import {
 } from "wagmi";
 import { TRADE_PREVIEW_ADDRESS } from "@/lib/contracts";
 import { TRADE_PREVIEW_ABI } from "@/lib/abis/tradePreviewAbi";
-import { formatUnits, parseUnits, erc20Abi } from "viem";
+import { formatUnits, parseUnits, erc20Abi, maxUint256 } from "viem";
 import { Big } from "big.js";
 import { TRADE_EXECUTE_ABI } from "@/lib/abis/tradeExecuteAbi";
 import { useEffect, useState } from "react";
@@ -238,12 +238,12 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
     )
       return;
 
-    if (Big(allowance.toString()).lt(totalCost.toString())) {
+    if (Big(allowance.toString()).lte(totalCost.toString())) {
       await writeApproval({
         address: tokens[1].address as `0x${string}`,
         abi: erc20Abi,
         functionName: "approve",
-        args: [optionMarketAddress as `0x${string}`, totalCost as bigint],
+        args: [optionMarketAddress as `0x${string}`, maxUint256],
       });
     }
 
