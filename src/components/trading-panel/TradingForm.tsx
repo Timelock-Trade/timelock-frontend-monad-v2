@@ -267,7 +267,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
           tickUpper: tradeData.steps[0].tickUpper,
           ttl: filteredTtlIV[safeSelectedDurationIndex].ttl,
           isCall: isLong,
-          maxCostAllowance: totalCost,
+          maxCostAllowance: maxUint256,
         },
       ],
     });
