@@ -3,15 +3,12 @@ const roundAfterDecimals = (input: string | number, maxDecimals = 10): string =>
   
   // Check if rounding is needed
   const str = num.toString();
-  const [whole, decimal] = str.split('.');
+  const { 1: decimal } = str.split('.');
   
   if (!decimal || decimal.length <= maxDecimals) {
     return str;
   }
-  
-  // Round to maxDecimals places
   const rounded = Math.round(num * Math.pow(10, maxDecimals)) / Math.pow(10, maxDecimals);
-  
   return rounded.toString();
 };
 
