@@ -29,11 +29,11 @@ export default function TradingPanel() {
 
   return (
     <div
-      className={`${isMobile ? "border border-[#1A1A1A] rounded-md p-4 w-full" : "w-full max-w-[400px] border-l border-[#1A1A1A] px-5"}`}
+      className={`${isMobile ? "border border-[#1A1A1A] rounded-sm p-4 w-full" : "w-full max-w-[380px] border-l border-[#1A1A1A] px-4 bg-[#0D0D0D]"}`}
     >      
-      <div className="flex flex-row mt-6 mb-4 px-2 gap-2 justify-center align-middle w-full">
-        <div className="flex-1 text-sm text-[#9CA3AF]">
-          Your Balance: {usdcBalance ? formatCondensed(usdcBalance.formatted) : '--'} USDC
+      <div className="flex flex-row mt-4 mb-3 gap-2 justify-between items-center w-full">
+        <div className="flex-1 text-xs text-[#999]">
+          Balance: {usdcBalance ? formatCondensed(usdcBalance.formatted) : '--'} USDC
         </div>
         <div>
           <Popover>
@@ -44,29 +44,29 @@ export default function TradingPanel() {
               side="top"
               align="end"
               sideOffset={10}
-              className="w-[316px] bg-[#1a1a1a80] border border-[#282324] backdrop-blur-xs flex flex-col gap-1 p-1"
+              className="w-[316px] bg-[#1a1a1a80] border border-[#282324] backdrop-blur-xs flex flex-col gap-1 p-1 rounded-sm"
             >
               <SettingsPopoverContent />
             </PopoverContent>
           </Popover>
         </div>
       </div>
-      <div className="flex-1 mb-6">
+      <div className="flex-1 mb-4">
         <Tabs
           value={tabValue}
           onValueChange={(value) => setTabValue(value as TabValue)}
           className="w-full"
         >
-          <TabsList className="p-[6px] h-[54px] bg-[#1a1a1a80] w-full">
+          <TabsList className="p-[3px] h-[44px] bg-[#1A1A1A] w-full rounded-sm">
             <TabsTrigger
               value={TabValue.LONG}
-              className="flex-1 flex text-[#616E85] font-medium data-[state=active]:text-[#19DE92] cursor-pointer flex-row items-center justify-center gap-2 data-[state=active]:bg-[#19de920f] dark:data-[state=active]:bg-[#19de920f]"
+              className="flex-1 flex text-[#999] text-sm font-medium data-[state=active]:text-[#19DE92] cursor-pointer flex-row items-center justify-center gap-2 data-[state=active]:bg-[#19de921a] dark:data-[state=active]:bg-[#19de921a] rounded-sm"
             >
               <LongTrendIcon width={12} height={12} /> Long
             </TabsTrigger>
             <TabsTrigger
               value={TabValue.SHORT}
-              className="flex-1 flex text-[#616E85] font-medium data-[state=active]:text-[#EC5058] cursor-pointer flex-row items-center justify-center gap-2 data-[state=active]:bg-[#ea39430f] dark:data-[state=active]:bg-[#ea39430f]"
+              className="flex-1 flex text-[#999] text-sm font-medium data-[state=active]:text-[#EC5058] cursor-pointer flex-row items-center justify-center gap-2 data-[state=active]:bg-[#ea39431a] dark:data-[state=active]:bg-[#ea39431a] rounded-sm"
             >
               <ShortTrendIcon width={12} height={12} /> Short
             </TabsTrigger>

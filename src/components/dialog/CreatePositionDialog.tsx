@@ -80,7 +80,7 @@ export function CreatePositionDialog({
         <DialogFooter className="!flex !flex-col !gap-2">
           <button
             className={cn(
-              "w-full disabled:opacity-50 cursor-pointer bg-[#19DE92] text-[#0D0D0D] font-medium text-base rounded-[12px] py-3",
+              "w-full disabled:opacity-50 cursor-pointer bg-[#19DE92] text-[#0D0D0D] font-semibold text-base rounded-sm py-3",
               isLong ? "bg-[#19DE92]" : "bg-[#EC5058]"
             )}
             disabled={disabled}

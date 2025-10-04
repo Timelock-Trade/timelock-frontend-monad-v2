@@ -18,7 +18,7 @@ export const monad = {
     default: {
       ...monadTestnet.blockExplorers.default,
       name: "MonadScan",
-      url: "https://testnet-rpc.monad.xyz",
+      url: "https://explorer.testnet.monad.xyz",
       apiUrl: "https://api.blockvision.org/v2/monad/account/tokens",
     },
   },

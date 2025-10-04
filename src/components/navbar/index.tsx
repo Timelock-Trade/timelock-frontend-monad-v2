@@ -13,37 +13,59 @@ import {
   DialogClose,
   MobileDialogContent,
 } from "@/components/ui/dialog";
-import { BarChart2, Layers, LayoutDashboard, BookOpen, X as CloseIcon } from "lucide-react";
+import { BarChart2, Layers, LayoutDashboard, BookOpen, X as CloseIcon, ChevronDown } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 const NAV_ITEMS = [
   {
-    title: "Trade",
+    title: "Perpetual",
     href: "/",
-    description: "Trade options with clear pricing and execution",
+    description: "Trade perpetual options",
     disabled: false,
     icon: BarChart2,
   },
   {
-    title: "Earn",
-    href: "/earn",
-    description: "Provide liquidity and earn market fees",
+    title: "1001x",
+    href: "/1001x",
+    description: "High leverage trading",
     disabled: true,
     icon: Layers,
   },
   {
-    title: "Dashboard",
-    href: "/dashboard",
-    description: "Track portfolio, positions and PnL",
+    title: "Spot",
+    href: "/spot",
+    description: "Spot trading",
     disabled: true,
     icon: LayoutDashboard,
   },
   {
-    title: "Docs",
-    href: "https://docs.timelock.trade",
-    description: "Read protocol, guides and API",
-    disabled: false,
+    title: "Portfolio",
+    href: "/portfolio",
+    description: "View your portfolio",
+    disabled: true,
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Referral",
+    href: "/referral",
+    description: "Referral program",
+    disabled: true,
     icon: BookOpen,
+  },
+  {
+    title: "Rewards",
+    href: "/rewards",
+    description: "Claim rewards",
+    disabled: true,
+    icon: BookOpen,
+  },
+  {
+    title: "More",
+    href: "#",
+    description: "More options",
+    disabled: true,
+    icon: ChevronDown,
+    hasDropdown: true,
   },
 ];
 
@@ -121,41 +143,54 @@ export default function Navbar() {
   const isMobile = useIsMobile();
 
   return (
-    <div className="w-full bg-[#0D0D0D]">
-      <nav className="flex items-center w-full mx-auto max-w-[1440px] py-[14px] px-[24px]">
+    <div className="w-full bg-[#0D0D0D] border-b border-[#1A1A1A]">
+      <nav className="flex items-center w-full py-[12px] px-[20px]">
         {/* Left: Logo + Links */}
-        <div className="flex items-center gap-[28px]">
-          {/* TODO: Replace with text if we can */}
+        <div className="flex items-center gap-[24px]">
           <Image
             src="/timelock-logo.png"
             alt="logo"
-            width={140}
-            height={18}
-            className="md:w-[180px] md:h-[20px]"
+            width={100}
+            height={16}
+            className="md:w-[120px] md:h-[16px]"
           />
-          <ul className="hidden md:flex flex-row items-center gap-[28px]">
-            {NAV_ITEMS.map(({ title, href, disabled }) => {
-              const isDocs = title === "Docs";
+          <ul className="hidden md:flex flex-row items-center gap-[20px]">
+            {NAV_ITEMS.map(({ title, href, disabled, hasDropdown }) => {
+              const content = (
+                <>
+                  {title}
+                  {hasDropdown && <ChevronDown className="w-3 h-3" />}
+                </>
+              );
+              
+              const className = cn(
+                "text-sm font-normal transition-colors flex items-center gap-1",
+                disabled
+                  ? "text-[#666] cursor-not-allowed"
+                  : title === "Perpetual"
+                  ? "text-white"
+                  : "text-[#999] hover:text-white"
+              );
+
+              if (disabled || href === "#") {
+                return (
+                  <span
+                    key={title}
+                    className={className}
+                    title="Coming soon"
+                  >
+                    {content}
+                  </span>
+                );
+              }
+
               return (
                 <Link
                   key={title}
                   href={href}
-                  onClick={disabled ? (e) => e.preventDefault() : undefined}
-                  aria-disabled={disabled || undefined}
-                  tabIndex={disabled ? -1 : undefined}
-                  className={cn(
-                    "text-white text-base font-medium transition-colors",
-                    disabled
-                      ? "text-[#A6B0C3] hover:text-[#D0D6E1]"
-                      : isDocs
-                      ? "text-[#A6B0C3] hover:text-[#D0D6E1]"
-                      : "hover:text-[#A6B0C3]"
-                  )}
-                  title={disabled ? "Coming soon" : undefined}
-                  target={isDocs ? "_blank" : undefined}
-                  rel={isDocs ? "noopener noreferrer" : undefined}
+                  className={className}
                 >
-                  {title}
+                  {content}
                 </Link>
               );
             })}
@@ -164,10 +199,10 @@ export default function Navbar() {
         {/* Right: Actions */}
         <div
           className={cn(
-            "flex flex-row items-center ml-auto flex-nowrap",
+            "flex flex-row items-center ml-auto flex-nowrap gap-3",
             isMobile 
-              ? "gap-1 max-w-[calc(100vw-120px)] overflow-hidden" 
-              : "gap-2 md:w-[520px] md:justify-end"
+              ? "max-w-[calc(100vw-120px)] overflow-hidden" 
+              : ""
           )}
         >
           {!isMobile && <FaucetButton />}

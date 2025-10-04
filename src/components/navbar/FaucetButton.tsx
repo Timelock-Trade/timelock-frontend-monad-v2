@@ -44,7 +44,7 @@ const FaucetButton = () => {
         rel="noopener noreferrer"
         aria-label="Mint"
         className={cn(
-          "text-sm font-medium p-2 md:px-3 md:py-3 rounded-full bg-[#131313]",
+          "text-sm font-medium p-2 md:px-3 md:py-3 rounded-sm bg-[#131313]",
           "cursor-pointer hover:bg-[#1a1a1a] disabled:opacity-50 disabled:cursor-not-allowed"
         )}
       >

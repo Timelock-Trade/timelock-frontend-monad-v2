@@ -20,7 +20,7 @@ const ChainStatus = () => {
   return (
     <div
       className={cn(
-        "text-sm font-medium p-2 md:px-3 md:py-3 rounded-full bg-[#131313] flex-shrink-0",
+        "text-sm font-medium p-2 md:px-3 md:py-3 rounded-sm bg-[#131313] flex-shrink-0",
         !isConnected || isChainSupported
           ? ""
           : "cursor-pointer hover:bg-[#1a1a1a]"

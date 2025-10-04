@@ -125,7 +125,7 @@ export default function Tables() {
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-[#1A1A1A] bg-[#0D0D0D] hover:bg-[#1A1A1A]/50 transition-colors"
+                className="border-b border-[#1A1A1A] bg-[#0A0A0A] hover:bg-[#111] transition-colors"
               >
                 {row.getVisibleCells().map((cell, index) => (
                   <td
@@ -214,7 +214,7 @@ export default function Tables() {
             {closedTable.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-[#1A1A1A] bg-[#0D0D0D] hover:bg-[#1A1A1A]/50 transition-colors"
+                className="border-b border-[#1A1A1A] bg-[#0A0A0A] hover:bg-[#111] transition-colors"
               >
                 {row.getVisibleCells().map((cell, index) => (
                   <td
@@ -235,27 +235,27 @@ export default function Tables() {
   };
 
   return (
-    <div className="border border-[#1A1A1A] rounded-md mt-4 relative">
-      <div className="flex flex-row items-center border-b border-[#1A1A1A] gap-4 md:gap-6 px-4 md:px-6 ">
+    <div className="border border-[#1A1A1A] rounded-sm mt-4 relative bg-[#0A0A0A]">
+      <div className="flex flex-row items-center border-b border-[#1A1A1A] gap-4 md:gap-6 px-4 md:px-6 bg-[#0D0D0D]">
         <button
-          className={`text-xs md:text-sm font-semibold py-3 md:py-4 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out whitespace-nowrap ${
+          className={`text-xs md:text-sm font-medium py-3 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out whitespace-nowrap ${
             activeTab === "open"
               ? "text-white after:w-full after:opacity-100"
-              : "text-white/60 hover:text-white after:w-0 after:opacity-0"
+              : "text-[#999] hover:text-white after:w-0 after:opacity-0"
           }`}
           onClick={() => setActiveTab("open")}
         >
-          Open Positions
+          Positions
         </button>
         <button
-          className={`text-xs md:text-sm font-semibold py-3 md:py-4 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out whitespace-nowrap ${
+          className={`text-xs md:text-sm font-medium py-3 outline-none relative cursor-pointer transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-white after:transition-[width,opacity] after:duration-200 after:ease-out whitespace-nowrap ${
             activeTab === "closed"
               ? "text-white after:w-full after:opacity-100"
-              : "text-white/60 hover:text-white after:w-0 after:opacity-0"
+              : "text-[#999] hover:text-white after:w-0 after:opacity-0"
           }`}
           onClick={() => setActiveTab("closed")}
         >
-          Closed Positions
+          Order history
         </button>
       </div>
       {activeTab === "open" ? renderTable() : renderClosedPositions()}

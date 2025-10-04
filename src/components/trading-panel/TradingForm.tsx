@@ -325,7 +325,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
           </form.Field>
         </div>
         
-        <div className={`flex mt-2 mb-4 flex-row gap-1 items-center border border-[#282324] rounded-[8px] w-fit ${isMobile ? 'px-2 py-1' : 'px-2 py-1'}`}>
+        <div className={`flex mt-2 mb-4 flex-row gap-1 items-center border border-[#282324] rounded-sm w-fit ${isMobile ? 'px-2 py-1' : 'px-2 py-1'}`}>
           <FlashIcon />
           <span className={`${isMobile ? 'text-sm' : 'text-sm'} font-medium text-[#1981F3] bg-[#1a1a1a80]`}>
             {leverageValue ? leverageValue + "x Leverage" : "--"}
@@ -373,7 +373,7 @@ export default function TradingForm({ isLong }: { isLong: boolean }) {
               <>
                 <button
                   className={cn(
-                    "w-full disabled:opacity-50 cursor-pointer bg-[#19DE92] text-[#0D0D0D] font-medium text-base rounded-[12px] py-3",
+                    "w-full disabled:opacity-50 cursor-pointer bg-[#19DE92] text-[#0D0D0D] font-semibold text-base rounded-sm py-3",
                     isLong ? "bg-[#19DE92]" : "bg-[#EC5058]"
                   )}
                   disabled={

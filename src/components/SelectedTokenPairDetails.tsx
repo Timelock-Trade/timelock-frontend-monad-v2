@@ -14,86 +14,60 @@ export default function SelectedTokenPairDetails() {
   const { data: tvlData } = useTVL(primePool);
 
   return (
-    <div
-      className={`flex ${isMobile ? "flex-col gap-4" : "flex-row justify-between items-start"} py-4`}
-    >
-      <div className="w-full">
-        <div className="flex flex-row items-center gap-3 justify-between">
-          <div className="flex flex-row gap-4">
-            <div className="px-6 flex flex-row items-center gap-[6px] bg-[#1A1A1A] rounded-md">
-              <Image
-                src={tokens[0].image}
-                alt={tokens[0].symbol}
-                width={20}
-                height={20}
-              />
-              <span className="font-semibold">
-                {tokens[0].symbol} / {tokens[1].symbol}
-              </span>
-            </div>
-            <div className="px-4 pb-2 pt-2  bg-[#1a1a1a80] rounded-md min-w-[180px]">
-              <div className="flex flex-row items-end gap-2 w-full justify-between">
-                <span className="text-[#616E85] text-xs font-medium">
-                  Spot Price
-                </span>
-                <PercentChange value={primePoolPriceData?.percentChange || 0} />
-              </div>
-              <div className="flex flex-row items-end gap-4 mt-1">
-                <span className="text-xl flex-1">
-                  {primePoolPriceData?.currentPrice ? (
-                    <NumberFlow value={primePoolPriceData.currentPrice} />
-                  ) : (
-                    "--"
-                  )}
-                </span>
-                <span className="text-muted-foreground">
-                  {tokens[1].symbol}
-                </span>
-              </div>
-            </div>
-            {/*<StatsCard
-            title="Spot Price"
-            value={primePoolPriceData?.currentPrice ? formatCondensed(primePoolPriceData?.currentPrice) + ' ' + selectedTokenPair[1].symbol : "--"}
-            percentage="10.50%"
-            isMobile={isMobile}
-          />*/}
-          </div>
-          {!isMobile && (
-            <div className="flex flex-row gap-4">
-              <StatsCard
-                title="TVL"
-                value={tvlData ? formatTVLFromScaled(tvlData.tvl1) : "--"}
-                percentage={10.5}
-                isMobile={isMobile}
-              />
-              <StatsCard
-                title="Volume (24H)"
-                value="$13.4M"
-                percentage={8.5}
-                isMobile={isMobile}
-              />
-            </div>
-          )}
+    <div className="py-3 px-4 bg-[#0D0D0D] border-b border-[#1A1A1A]">
+      <div className="flex items-center gap-6">
+        {/* Token Pair */}
+        <div className="flex items-center gap-2">
+          <Image
+            src={tokens[0].image}
+            alt={tokens[0].symbol}
+            width={24}
+            height={24}
+          />
+          <span className="text-white font-semibold text-lg">
+            {tokens[0].symbol}{tokens[1].symbol}
+          </span>
+          <span className="text-[#999] text-sm">{tokens[0].symbol}</span>
         </div>
+
+        {/* Price */}
+        <div className="flex flex-col">
+          <span className="text-[#19DE92] text-2xl font-semibold">
+            {primePoolPriceData?.currentPrice ? (
+              <NumberFlow value={primePoolPriceData.currentPrice} />
+            ) : (
+              "--"
+            )}
+          </span>
+          <div className="flex items-center gap-2">
+            <PercentChange value={primePoolPriceData?.percentChange || 0} />
+          </div>
+        </div>
+
+        {/* Stats Row */}
+        {!isMobile && (
+          <div className="flex items-center gap-6 ml-4 text-xs">
+            <StatItem label="Mark" value={primePoolPriceData?.currentPrice?.toFixed(1) || "--"} />
+            <StatItem label="Index" value={primePoolPriceData?.currentPrice?.toFixed(2) || "--"} />
+            <StatItem 
+              label="Funding/Countdown" 
+              value="0.0100% / 01:00:44" 
+              valueColor="text-[#19DE92]"
+            />
+            <StatItem label="24h volume" value="71.01B" />
+            <StatItem label="Open Interest" value="2.71B" />
+          </div>
+        )}
       </div>
-      {/* Mobile: keep stats next to the details as before */}
-      <div
-        className={`flex ${isMobile ? "flex-row gap-2" : "hidden"} ${isMobile ? "justify-start" : ""}`}
-      >
-        {/* TODO: Later only send numbers so neg pos can be checked  */}
-        <StatsCard
-          title="TVL"
-          value={tvlData ? formatTVLFromScaled(tvlData.tvl1) : "--"}
-          percentage={10.5}
-          isMobile={isMobile}
-        />
-        <StatsCard
-          title="Volume (24H)"
-          value="$13.4M"
-          percentage={8.5}
-          isMobile={isMobile}
-        />
-      </div>
+    </div>
+  );
+}
+
+function StatItem({ label, value, valueColor = "text-white" }: { label: string; value: string; valueColor?: string }) {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <span className="text-[#999] text-xs">{label}</span>
+      <span className={`${valueColor} font-medium`}>{value}</span>
     </div>
   );
 }

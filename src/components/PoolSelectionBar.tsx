@@ -16,39 +16,39 @@ export default function PoolSelectionBar() {
   const isSelected = (market: string) => selectedMarket === market;
 
   const cardBaseClasses =
-    "border rounded-[10px] gap-3 flex flex-col p-4 min-w-[220px] cursor-pointer transition-colors";
+    "border rounded-sm gap-2 flex flex-col p-3 min-w-[200px] cursor-pointer transition-colors";
   const getCardClasses = (market: string) =>
     `${cardBaseClasses} ${
       isSelected(market)
-        ? "border-[#4A4A4A] bg-[#1A1A1A]"
-        : "border-[#1A1A1A] bg-[#0D0D0D] hover:bg-[#131313]"
+        ? "border-[#333] bg-[#151515]"
+        : "border-[#1A1A1A] bg-[#0A0A0A] hover:bg-[#111]"
     }`;
 
   return (
-    <div className="mt-3 flex flex-row gap-3 overflow-x-auto">
+    <div className="mt-4 mb-3 flex flex-row gap-3 overflow-x-auto">
       {/* WMON/USDC */}
       <div
         className={getCardClasses("wmon-usdc")}
         onClick={() => setSelectedMarket("wmon-usdc")}
       >
-        <div className="flex flex-row items-center gap-12">
+        <div className="flex flex-row items-center gap-8">
           <div className="flex flex-row items-center gap-[6px]">
-            <Image src="/tokens/wmon.png" alt="WMON" width={14} height={14} />
-            <span className="text-[#9CA3AF] text-sm whitespace-nowrap">
+            <Image src="/tokens/wmon.png" alt="WMON" width={12} height={12} />
+            <span className="text-[#999] text-xs whitespace-nowrap">
               WMON / USDC
             </span>
           </div>
           <PercentChange value={wmonPriceData?.percentChange || 0} />
         </div>
         <div className="flex flex-row items-center gap-[6px]">
-          <span className="font-medium">
+          <span className="font-medium text-sm">
             {wmonPriceData?.currentPrice ? (
               <NumberFlow value={wmonPriceData.currentPrice} />
             ) : (
               "--"
             )}
           </span>
-          <span className="text-[#9CA3AF] text-xs">USDC</span>
+          <span className="text-[#999] text-xs">USDC</span>
         </div>
       </div>
 
@@ -57,24 +57,24 @@ export default function PoolSelectionBar() {
         className={getCardClasses("weth-usdc")}
         onClick={() => setSelectedMarket("weth-usdc")}
       >
-        <div className="flex flex-row items-center gap-12">
+        <div className="flex flex-row items-center gap-8">
           <div className="flex flex-row items-center gap-[6px]">
-            <Image src="/tokens/weth.png" alt="WETH" width={14} height={14} />
-            <span className="text-[#9CA3AF] text-sm whitespace-nowrap">
+            <Image src="/tokens/weth.png" alt="WETH" width={12} height={12} />
+            <span className="text-[#999] text-xs whitespace-nowrap">
               WETH / USDC
             </span>
           </div>
           <PercentChange value={wethPriceData?.percentChange || 0} />
         </div>
         <div className="flex flex-row items-center gap-[6px]">
-          <span className="font-medium">
+          <span className="font-medium text-sm">
             {wethPriceData?.currentPrice ? (
               <NumberFlow value={wethPriceData.currentPrice} />
             ) : (
               "--"
             )}
           </span>
-          <span className="text-[#9CA3AF] text-xs">USDC</span>
+          <span className="text-[#999] text-xs">USDC</span>
         </div>
       </div>
     </div>

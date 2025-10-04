@@ -27,7 +27,7 @@ export const AmountInput = ({
   }, []);
 
   return (
-    <div className="p-[10px_12px_12px_16px] flex gap-1 flex-row rounded-xl border border-[#282324] bg-[#1a1a1a80] transition-all duration-200 hover:border-[#3a3536] focus-within:border-[#404040] focus-within:shadow-[0_0_0_3px_rgba(255,255,255,0.08)] items-center">
+    <div className="p-[10px_12px_12px_16px] flex gap-1 flex-row rounded-sm border border-[#282324] bg-[#1a1a1a80] transition-all duration-200 hover:border-[#3a3536] focus-within:border-[#404040] focus-within:shadow-[0_0_0_3px_rgba(255,255,255,0.08)] items-center">
       <div className="flex flex-col gap-0 flex-1 min-w-0">
         <input
           type="number"
@@ -64,7 +64,7 @@ export const AmountInput = ({
         </div>
       </div>
       <div className="flex flex-row gap-2 items-start shrink-0">
-        <div className={`flex items-center gap-[6px] text-sm justify-center rounded-md bg-[#0D0D0D] h-[36px] ${isMobile ? 'px-[8px]' : 'px-[12px]'} transition-colors duration-200 hover:bg-[#141414]`}>
+        <div className={`flex items-center gap-[6px] text-sm justify-center rounded-sm bg-[#0D0D0D] h-[36px] ${isMobile ? 'px-[8px]' : 'px-[12px]'} transition-colors duration-200 hover:bg-[#141414]`}>
           <Image
             src={tokens[0].image}
             alt={tokens[0].symbol}

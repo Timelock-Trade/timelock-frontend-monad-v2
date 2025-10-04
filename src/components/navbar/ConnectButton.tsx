@@ -32,7 +32,7 @@ const ConnectButton = () => {
   });
 
   return (
-    <div className="flex flex-row items-center bg-[#131313] rounded-[14px] overflow-hidden flex-shrink-0">
+    <div className="flex flex-row items-center bg-[#131313] rounded-sm overflow-hidden flex-shrink-0">
       {isConnected && isMounted && !isMobile && (
         <div className="w-fit flex h-full px-2 pl-3 text-xs whitespace-nowrap">
           {isLoading ? (
@@ -52,7 +52,7 @@ const ConnectButton = () => {
             <button
               onClick={show}
               className={cn(
-                "h-[42px] whitespace-nowrap rounded-[14px] bg-white text-[#0D0D0D] font-semibold cursor-pointer flex-shrink-0",
+                "h-[42px] whitespace-nowrap rounded-sm bg-white text-[#0D0D0D] font-semibold cursor-pointer flex-shrink-0",
                 "transition-all duration-200",
                 isMobile 
                   ? "px-2 min-w-[70px] text-sm" 

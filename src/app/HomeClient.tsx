@@ -9,6 +9,7 @@ import { MarketDataProvider } from "@/context/MarketDataProvider";
 import { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import PoolSelectionBar from "@/components/PoolSelectionBar";
+import TickerBar from "@/components/TickerBar";
 
 export default function HomeClient() {
   const [hasMounted, setHasMounted] = useState(false);
@@ -21,9 +22,9 @@ export default function HomeClient() {
   }
   return (
     <MarketDataProvider>
-      <main style={{ fontFamily: "var(--font-ibm)" }}>
+      <main style={{ fontFamily: "var(--font-ibm)" }} className="pb-10">
         <Navbar />
-        <div className="max-w-[1440px] mx-auto border-t border-t-[#1A1A1A]">
+        <div className="w-full">
           {isMobile ? (
             // Mobile Layout: Single column
             <>
@@ -31,7 +32,7 @@ export default function HomeClient() {
               <SelectedTokenPairDetails />
 
               {/* Chart Section */}
-              <div className="border border-[#1A1A1A] p-[12px] pb-[0px] rounded-md relative">
+              <div className="border border-[#1A1A1A] p-[12px] pb-[0px] rounded-sm relative">
                 <div className="mb-4 h-[300px] flex items-center justify-center">
                   <Graph />
                 </div>
@@ -52,17 +53,19 @@ export default function HomeClient() {
               </div>
             </>
           ) : (
-            // Desktop Layout: Match original flex-row design
-            <div className="max-w-[1440px] flex flex-row mx-auto">
-              <div className="pl-6 w-full max-w-[1054px] pr-6" style={{ background: "#0D0D0D" }}>
+            // Desktop Layout: Full width design
+            <div className="w-full flex flex-row">
+              <div className="w-full flex-1" style={{ background: "#0D0D0D" }}>
                 <SelectedTokenPairDetails />
-                <div className="border border-[#1A1A1A] p-[12px] pb-[0px] rounded-md relative">
-                  <div className="mb-4 h-[500px] flex items-center justify-center">
+                <div className="p-0 relative">
+                  <div className="h-[500px] flex items-center justify-center bg-[#0A0A0A]">
                     <Graph />
                   </div>
                 </div>
-                <PoolSelectionBar />
-                <div className="mb-20">
+                <div className="px-4">
+                  <PoolSelectionBar />
+                </div>
+                <div className="mb-20 px-4">
                   <Tables />
                 </div>
               </div>
@@ -70,6 +73,7 @@ export default function HomeClient() {
             </div>
           )}
         </div>
+        <TickerBar />
       </main>
     </MarketDataProvider>
   );
