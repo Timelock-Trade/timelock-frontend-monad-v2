@@ -1,22 +1,22 @@
 "use client";
 import { memo } from "react";
-import { useIsMobile } from "@/hooks/useIsMobile";
+// import { useIsMobile } from "@/hooks/useIsMobile";
 import { useMarketData } from "@/context/MarketDataProvider";
 
 export const TradingView = memo(() => {
   const { primePool } = useMarketData();
-  const isMobile = useIsMobile(768);
-  const isTablet = useIsMobile(1024);
+  // const isMobile = useIsMobile(768);
+  // const isTablet = useIsMobile(1024);
 
   // Responsive scale factor for the entire TradingView UI
-  const getScale = () => {
-    if (isMobile) return 0.65; // 65% scale for mobile
-    if (isTablet) return 0.75; // 75% scale for tablets
-    return 0.85; // 85% scale for desktop
-  };
+  // const getScale = () => {
+  //   if (isMobile) return 0.65; // 65% scale for mobile
+  //   if (isTablet) return 0.75; // 75% scale for tablets
+  //   return 0.85; // 85% scale for desktop
+  // };
 
-  const SCALE = getScale();
-  const compensatingPercent = `${(1 / SCALE) * 100}%`;
+  // const SCALE = getScale();
+  // const compensatingPercent = `${(1 / SCALE) * 100}%`;
   
   return (
     <div className="h-full w-full overflow-hidden">
