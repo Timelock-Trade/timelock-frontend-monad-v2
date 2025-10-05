@@ -4,7 +4,7 @@ import Navbar from "../components/navbar";
 import SelectedTokenPairDetails from "@/components/SelectedTokenPairDetails";
 import Tables from "@/components/tables";
 import TradingPanel from "@/components/trading-panel/TradingPanel";
-import Graph from "@/components/graph";
+import {TradingView} from "@/components/graph/TradingView";
 import { MarketDataProvider } from "@/context/MarketDataProvider";
 import { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -31,9 +31,9 @@ export default function HomeClient() {
               <SelectedTokenPairDetails />
 
               {/* Chart Section */}
-              <div className="border border-[#1A1A1A] p-[12px] pb-[0px] rounded-md relative">
-                <div className="mb-4 h-[300px] flex items-center justify-center">
-                  <Graph />
+              <div className="border border-[#1A1A1A] rounded-md relative">
+                <div className="h-[300px] flex items-center justify-center">
+                  <TradingView />
                 </div>
               </div>
               {/* Pool Selection under chart */}
@@ -56,9 +56,9 @@ export default function HomeClient() {
             <div className="max-w-[1440px] flex flex-row mx-auto">
               <div className="pl-6 w-full max-w-[1054px] pr-6" style={{ background: "#0D0D0D" }}>
                 <SelectedTokenPairDetails />
-                <div className="border border-[#1A1A1A] p-[12px] pb-[0px] rounded-md relative">
-                  <div className="mb-4 h-[500px] flex items-center justify-center">
-                    <Graph />
+                <div className="border border-[#1A1A1A] rounded-md relative">
+                  <div className="h-[500px] flex items-center justify-center">
+                    <TradingView />
                   </div>
                 </div>
                 <PoolSelectionBar />

@@ -2,11 +2,11 @@
 import { NextResponse } from "next/server";
 
 const TIMEFRAME_MAP = {
-  1: "1m",
-  5: "1m",
-  15: "1m",
-  60: "1h",
-  "1D": "1d",
+  1: "1d",
+  5: "5d",
+  15: "15d",
+  30: '1m',
+  90: '1m',
 };
 
 export async function GET(request: Request) {
@@ -21,9 +21,10 @@ export async function GET(request: Request) {
         status: 400,
       });
     }
-    const resolution = searchParams.get("resolution");
+    const resolution = parseInt(searchParams.get("resolution")!);
     const symbol = searchParams.get("symbol");
 
+    console.log(resolution);
     const timeframe = TIMEFRAME_MAP[resolution as keyof typeof TIMEFRAME_MAP];
 
     if (!resolution || !symbol) {
@@ -37,14 +38,14 @@ export async function GET(request: Request) {
         { status: 400 },
       );
     }
-    const validTimeframes = ["1m", "1h", "1d"];
+    // const validTimeframes = ["1m", "1h", "1d"];
 
-    if (!validTimeframes.includes(timeframe)) {
-      return NextResponse.json(
-        { error: "Invalid timeframe. Must be one of: day, hour, minute" },
-        { status: 400 },
-      );
-    }
+    // if (!validTimeframes.includes(timeframe)) {
+    //   return NextResponse.json(
+    //     { error: "Invalid timeframe. Must be one of: day, hour, minute" },
+    //     { status: 400 },
+    //   );
+    // }
     console.log(
       `${process.env.NEXT_PUBLIC_OHLC_BACKEND}/ohlc/${primePool}?from=${from}&to=${to}&interval=${timeframe}`,
     );

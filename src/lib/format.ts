@@ -1,4 +1,4 @@
-const roundAfterDecimals = (input: string | number, maxDecimals = 10): string => {
+const roundAfterDecimals = (input: string | number, maxDecimals = 5): string => {
   const num = typeof input === 'string' ? parseFloat(input) : input;
   
   // Check if rounding is needed
@@ -13,7 +13,7 @@ const roundAfterDecimals = (input: string | number, maxDecimals = 10): string =>
 };
 
 export const formatBasic = (input: string | number): string => {
-  const str = roundAfterDecimals(input, 10).toString();
+  const str = roundAfterDecimals(input).toString();
   const [whole, decimal] = str.split(".");
 
   const formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -27,7 +27,7 @@ export const formatCondensed = (
   input: string | number,
   decimals = 2,
 ): string => {
-  const str = roundAfterDecimals(input, 10).toString();
+  const str = roundAfterDecimals(input).toString();
   const [whole, decimal] = str.split(".");
 
   const formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
