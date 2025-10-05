@@ -35,7 +35,7 @@ import { cn } from "@/lib/utils";
  * };
  */
 
-const FaucetButton = () => {
+const FaucetButton = ({ showTextOnMobile = false }: { showTextOnMobile?: boolean }) => {
   return (
     <>
       <a
@@ -50,7 +50,7 @@ const FaucetButton = () => {
       >
         <div className="flex flex-row items-center gap-2">
           <FaucetIcon />
-          <span className="hidden md:inline">Mint</span>
+          <span className={cn(showTextOnMobile ? "inline" : "hidden md:inline")}>Mint</span>
         </div>
       </a>
     </>
