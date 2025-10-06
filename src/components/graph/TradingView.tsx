@@ -23,7 +23,7 @@ export const TradingView = memo(() => {
       <iframe
         id="geckoterminal-embed"
         title="GeckoTerminal Embed"
-        src={`https://www.geckoterminal.com/monad-testnet/pools/${primePool}?embed=1&info=0&swaps=0&light_chart=0&chart_type=market_cap&resolution=1d&bg_color=0e0e0e`}
+        src={`https://www.geckoterminal.com/monad-testnet/pools/${primePool}?embed=1&info=0&swaps=0&light_chart=0&chart_type=price&resolution=1d&bg_color=0e0e0e`}
         frameBorder="0"
         allow="clipboard-write"
         allowFullScreen
