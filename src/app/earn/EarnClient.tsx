@@ -10,6 +10,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { MarketDataProvider } from "@/context/MarketDataProvider";
+import { useRouter } from "next/navigation";
 
 type Asset = "ALL" | "ETH" | "SOL" | "BTC";
 
@@ -63,6 +64,16 @@ const POOLS: Pool[] = [
 
 export default function EarnClient() {
   const [selectedAsset, setSelectedAsset] = useState<Asset>("ALL");
+  const router = useRouter();
+
+  const handleDepositClick = (strategy: Strategy, pool: Pool) => {
+    // Navigate to strategy page with parameters
+    const params = new URLSearchParams({
+      pool: pool.name,
+      strategy: strategy.name,
+    });
+    router.push(`/strategy?${params.toString()}`);
+  };
 
   return (
     <MarketDataProvider>
@@ -202,7 +213,10 @@ export default function EarnClient() {
                                 {strategy.profitCut}
                               </div>
                               <div className="flex justify-end ">
-                                <button className="px-6 py-2 hover:cursor-pointer bg-[#3B82F6] text-white rounded-lg hover:bg-[#2563EB] transition-colors text-[14px] font-medium">
+                                <button 
+                                  onClick={() => handleDepositClick(strategy, pool)}
+                                  className="px-6 py-2 hover:cursor-pointer bg-[#3B82F6] text-white rounded-lg hover:bg-[#2563EB] transition-colors text-[14px] font-medium"
+                                >
                                   Deposit
                                 </button>
                               </div>
